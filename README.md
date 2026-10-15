@@ -425,6 +425,21 @@ flowchart LR
 
 ---
 
+## ⭐ Star History
+
+觉得有用的话，点个 Star 让更多卖家和开发者看到它。
+
+<p align="center">
+  <a href="https://star-history.com/#orylite/lindyson-ai&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=orylite/lindyson-ai&type=Date&theme=dark">
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=orylite/lindyson-ai&type=Date" width="85%">
+    </picture>
+  </a>
+</p>
+
+---
+
 ## 📜 第三方资源与许可
 
 随仓库分发的第三方资源清单见 [NOTICE](NOTICE)，细节见 [ATTRIBUTIONS.md](ATTRIBUTIONS.md) 和 `public/fonts/说明.md`。首页商品图与视频均为 AI 生成，来源记录在 `src/imports/landing-masters/PROVENANCE.md`，README 顶部横幅是首页截图。母版文件不在仓库里。
