@@ -2,6 +2,7 @@ import { registerReferralRoutes } from './routes/referralRoutes.js';
 import cors from '@fastify/cors';
 import formbody from '@fastify/formbody';
 import jwt from '@fastify/jwt';
+import rateLimit from '@fastify/rate-limit';
 import fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import {
   hasZodFastifySchemaValidationErrors,
@@ -69,6 +70,14 @@ export function buildApp() {
     secret: env.JWT_SECRET,
   });
   app.register(formbody);
+  // 全局按来源 IP 限流，作为所有路由的兜底；登录、注册、OAuth 注册等敏感接口另有更严格的数据库限流。
+  // RATE_LIMIT_MAX=0 关闭（仅建议在压测或完全隔离的内网环境使用）。
+  if (env.RATE_LIMIT_MAX > 0) {
+    app.register(rateLimit, {
+      max: env.RATE_LIMIT_MAX,
+      timeWindow: '1 minute',
+    });
+  }
 
   const allowedOrigins = new Set(
     env.CORS_ORIGIN.split(',').map(origin => origin.trim().replace(/\/$/, '')).filter(Boolean),

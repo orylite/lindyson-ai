@@ -92,12 +92,13 @@ function resolveSitemapPath(configuredPath) {
 }
 
 function decodeXmlEntities(value) {
+  // &amp; 必须最后替换，否则 &amp;lt; 会被二次解码成 <。
   return value
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&');
 }
 
 function loadLocalEnv() {
