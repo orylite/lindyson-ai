@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+# 产品按 Asia/Shanghai 处理日期，部分单元测试断言本地时间字符串；runner 默认 UTC 会失败。
+env:
+  TZ: Asia/Shanghai
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
