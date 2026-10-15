@@ -16,14 +16,16 @@
 </p>
 
 <p align="center">
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/github/package-json/v/orylite/lindyson-ai?label=version&color=0F766E" alt="Version"></a>
+  <a href="https://www.lindyson.com"><img src="https://img.shields.io/badge/%E5%9C%A8%E7%BA%BF%E4%BD%93%E9%AA%8C-www.lindyson.com-D946EF?style=for-the-badge&logo=googlechrome&logoColor=white" alt="在线体验 www.lindyson.com" height="40"></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/orylite/lindyson-ai/actions/workflows/ci.yml"><img src="https://github.com/orylite/lindyson-ai/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/orylite/lindyson-ai/security/code-scanning"><img src="https://github.com/orylite/lindyson-ai/actions/workflows/github-code-scanning/codeql/badge.svg" alt="CodeQL"></a>
   <a href="MCP_CHATGPT.md"><img src="https://img.shields.io/badge/MCP-ChatGPT%20%2F%20Codex%20ready-111827?logo=openai&logoColor=white" alt="MCP: ChatGPT / Codex ready"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License: Apache-2.0"></a>
   <img src="https://img.shields.io/badge/node-%3E%3D22-339933?logo=node.js&logoColor=white" alt="Node 22">
   <img src="https://img.shields.io/badge/docker-compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
-  <a href="https://www.lindyson.com"><img src="https://img.shields.io/badge/%E5%9C%A8%E7%BA%BF%E4%BD%93%E9%AA%8C-lindyson.com-7C3AED" alt="在线体验"></a>
 </p>
 
 <p align="center">
