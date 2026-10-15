@@ -8,16 +8,18 @@ apps/api/dist/
 coverage/
 test-results/
 playwright-report/
-storage/
+# 本地上传目录（LOCAL_STORAGE_DIR 默认值），只忽略根目录和 apps/api 下的，不要写成 storage/，否则会吞掉 apps/api/src/storage 源码
+/storage/
+/apps/api/storage/
 *.log
 
 # 2026-10-16 开源准备：临时包、验证证据、归档与 macOS 杂项
 .tmp/
 .tmp_*
-artifacts/
-output/
-tmp/
-deliverables/
+/artifacts/
+/output/
+/tmp/
+/deliverables/
 *.tar
 *.tgz
 ._*
