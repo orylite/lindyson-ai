@@ -1,0 +1,58 @@
+{
+  "approvalVersion": "lindyson.provider-operational-usage-missing-evidence-approval/v1",
+  "approvalId": "seedance-25-shadow-20260811-admin-cost-confirmation-v1",
+  "manifestSha256": "c15207c28dc03c346468e188c27404dd10001bd78fe920d3b5aaa5434238833a",
+  "approvedByUserId": "00000000-0000-4000-8000-00000000ad01",
+  "approvedAt": "2026-08-12T02:32:09.000Z",
+  "reason": "historical-original-evidence-unavailable",
+  "note": "用户在本轮明确确认：缺少原始文件的六条历史 Seedance 2.5 运营调用仍计入 Lindyson Admin 官网列表价成本；本确认不伪造 Provider 外部 ID，也不建立官方账单归属。",
+  "decision": {
+    "countAsAdminOperationalCost": true,
+    "allowProviderExternalIdClaims": false,
+    "allowOfficialBillAttribution": false
+  },
+  "records": [
+    {
+      "provider": "volcengine-ark",
+      "sourceRunId": "seedance-25-shadow-20260811T212900Z",
+      "sourceItemKey": "no-reference",
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T212900Z/canary.ndjson",
+      "evidenceSha256": "dcb1f03585a178be94e98b61306b1e08ac79156384a8ae8e2f3d5d7797bd466a"
+    },
+    {
+      "provider": "volcengine-ark",
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "no-reference",
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+    },
+    {
+      "provider": "volcengine-ark",
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "reference-video",
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+    },
+    {
+      "provider": "volcengine-ark",
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "audio-only",
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+    },
+    {
+      "provider": "volcengine-ark",
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "first-last-adaptive",
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+    },
+    {
+      "provider": "volcengine-ark",
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "720p-30s",
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+x-api-env: &api-env
+  NODE_ENV: ${NODE_ENV:-production}
+  HOST: ${HOST:-0.0.0.0}
+  PORT: ${PORT:-4300}
+  DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgres://lindyson:${POSTGRES_PASSWORD:-lindyson}@postgres:5432/lindyson}
+  REDIS_URL: ${COMPOSE_REDIS_URL:-redis://redis:6379}
+  JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set to a strong random value}
+  CORS_ORIGIN: ${CORS_ORIGIN:?CORS_ORIGIN must be set to explicit HTTPS origins}
+  PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?PUBLIC_BASE_URL must be set to the public HTTPS API origin}
+  APP_BASE_URL: ${APP_BASE_URL:?APP_BASE_URL must be set to the public HTTPS app origin}
+  MCP_ENABLED: ${MCP_ENABLED:-false}
+  MCP_PUBLIC_URL: ${MCP_PUBLIC_URL:-}
+  MCP_OAUTH_SECRET: ${MCP_OAUTH_SECRET:-}
+  MCP_OAUTH_JWKS_JSON: ${MCP_OAUTH_JWKS_JSON:-}
+  MCP_FILE_ENCRYPTION_KEY: ${MCP_FILE_ENCRYPTION_KEY:-}
+  MCP_READ_RATE_PER_MINUTE: ${MCP_READ_RATE_PER_MINUTE:-60}
+  MCP_GENERATE_RATE_PER_MINUTE: ${MCP_GENERATE_RATE_PER_MINUTE:-6}
+  MCP_IMPORT_USER_CONCURRENCY: ${MCP_IMPORT_USER_CONCURRENCY:-2}
+  MCP_IMPORT_GLOBAL_CONCURRENCY: ${MCP_IMPORT_GLOBAL_CONCURRENCY:-4}
+  STORAGE_DRIVER: ${STORAGE_DRIVER:-local}
+  # API 与 worker 是独立容器，必须共同读写挂载卷的绝对路径。
+  LOCAL_STORAGE_DIR: /app/storage
+  TOS_ENDPOINT: ${TOS_ENDPOINT:-}
+  TOS_REGION: ${TOS_REGION:-cn-beijing}
+  TOS_BUCKET: ${TOS_BUCKET:-}
+  TOS_ACCESS_KEY_ID: ${TOS_ACCESS_KEY_ID:-}
+  TOS_SECRET_ACCESS_KEY: ${TOS_SECRET_ACCESS_KEY:-}
+  TOS_READ_URL_EXPIRES_SECONDS: ${TOS_READ_URL_EXPIRES_SECONDS:-43200}
+  TOS_FORCE_PATH_STYLE: ${TOS_FORCE_PATH_STYLE:-false}
+  ARK_API_KEY: ${ARK_API_KEY:-}
+  ARK_BASE_URL: ${ARK_BASE_URL:-https://ark.cn-beijing.volces.com/api/v3}
+  ARK_SEEDANCE_MODEL: ${ARK_SEEDANCE_MODEL:-doubao-seedance-2-0-260128}
+  ARK_SEEDANCE_FAST_MODEL: ${ARK_SEEDANCE_FAST_MODEL:-doubao-seedance-2-0-fast-260128}
+  ARK_SEEDANCE_MINI_MODEL: ${ARK_SEEDANCE_MINI_MODEL:-doubao-seedance-2-0-mini-260615}
+  ARK_SEEDANCE_25_MODEL: ${ARK_SEEDANCE_25_MODEL:-doubao-seedance-2-5-260628}
+  ARK_SEEDREAM_MODEL: ${ARK_SEEDREAM_MODEL:-doubao-seedream-5-0-pro-260628}
+  ARK_SEEDREAM_TIMEOUT_MS: ${ARK_SEEDREAM_TIMEOUT_MS:-180000}
+  ARK_POLL_INTERVAL_MS: ${ARK_POLL_INTERVAL_MS:-5000}
+  ARK_TASK_TIMEOUT_MS: ${ARK_TASK_TIMEOUT_MS:-900000}
+  ARK_DOWNLOAD_TIMEOUT_MS: ${ARK_DOWNLOAD_TIMEOUT_MS:-120000}
+  ARK_ARCHIVE_STALL_TIMEOUT_MS: ${ARK_ARCHIVE_STALL_TIMEOUT_MS:-30000}
+  ARK_ARCHIVE_TOTAL_TIMEOUT_MS: ${ARK_ARCHIVE_TOTAL_TIMEOUT_MS:-600000}
+  ARK_PROMPT_WIZARD_API_KEY: ${ARK_PROMPT_WIZARD_API_KEY:-}
+  ARK_PROMPT_WIZARD_MODEL: ${ARK_PROMPT_WIZARD_MODEL:-doubao-seed-2-0-lite-260428}
+  REAL_PORTRAIT_PROVIDER_MODE: ${REAL_PORTRAIT_PROVIDER_MODE:-disabled}
+  VOLC_ARK_ASSET_ACCESS_KEY_ID: ${VOLC_ARK_ASSET_ACCESS_KEY_ID:-}
+  VOLC_ARK_ASSET_SECRET_ACCESS_KEY: ${VOLC_ARK_ASSET_SECRET_ACCESS_KEY:-}
+  VOLC_ARK_ASSET_ENDPOINT: ${VOLC_ARK_ASSET_ENDPOINT:-https://ark.cn-beijing.volcengineapi.com/}
+  VOLC_ARK_ASSET_REGION: ${VOLC_ARK_ASSET_REGION:-cn-beijing}
+  VOLC_ARK_ASSET_SERVICE: ${VOLC_ARK_ASSET_SERVICE:-ark}
+  VOLC_ARK_ASSET_VERSION: ${VOLC_ARK_ASSET_VERSION:-2024-01-01}
+  VOLC_ARK_ASSET_PROJECT_NAME: ${VOLC_ARK_ASSET_PROJECT_NAME:-default}
+  REAL_PORTRAIT_PROVIDER_TIMEOUT_MS: ${REAL_PORTRAIT_PROVIDER_TIMEOUT_MS:-15000}
+  REAL_PORTRAIT_GROUP_SOFT_LIMIT: ${REAL_PORTRAIT_GROUP_SOFT_LIMIT:-45}
+  REAL_PORTRAIT_ASSET_SOFT_LIMIT: ${REAL_PORTRAIT_ASSET_SOFT_LIMIT:-45}
+  REAL_PORTRAIT_INVITE_TTL_SECONDS: ${REAL_PORTRAIT_INVITE_TTL_SECONDS:-1800}
+  REAL_PORTRAIT_TOKEN_ENCRYPTION_KEY: ${REAL_PORTRAIT_TOKEN_ENCRYPTION_KEY:-}
+  REAL_PORTRAIT_CONTROLLER_NAME: ${REAL_PORTRAIT_CONTROLLER_NAME:-}
+  REAL_PORTRAIT_PROCESSOR_NAME: ${REAL_PORTRAIT_PROCESSOR_NAME:-}
+  REAL_PORTRAIT_PRIVACY_CONTACT: ${REAL_PORTRAIT_PRIVACY_CONTACT:-}
+  REAL_PORTRAIT_PRIVACY_POLICY_URL: ${REAL_PORTRAIT_PRIVACY_POLICY_URL:-}
+  PROMPT_WIZARD_TIMEOUT_MS: ${PROMPT_WIZARD_TIMEOUT_MS:-120000}
+  PROMPT_WIZARD_REQUEST_BUDGET_MS: ${PROMPT_WIZARD_REQUEST_BUDGET_MS:-180000}
+  PROMPT_WIZARD_BATCH_BUDGET_MS: ${PROMPT_WIZARD_BATCH_BUDGET_MS:-240000}
+  PROMPT_WIZARD_MAX_RETRIES: ${PROMPT_WIZARD_MAX_RETRIES:-1}
+  PROMPT_WIZARD_RETRY_BASE_DELAY_MS: ${PROMPT_WIZARD_RETRY_BASE_DELAY_MS:-1000}
+  PROMPT_WIZARD_RETRY_MAX_DELAY_MS: ${PROMPT_WIZARD_RETRY_MAX_DELAY_MS:-8000}
+  PROMPT_WIZARD_QUEUE_CONCURRENCY: ${PROMPT_WIZARD_QUEUE_CONCURRENCY:-10}
+  PROMPT_WIZARD_PROVIDER_CONCURRENCY: ${PROMPT_WIZARD_PROVIDER_CONCURRENCY:-30}
+  VOLC_BILLING_ACCESS_KEY_ID: ${VOLC_BILLING_ACCESS_KEY_ID:-}
+  VOLC_BILLING_SECRET_ACCESS_KEY: ${VOLC_BILLING_SECRET_ACCESS_KEY:-}
+  VOLC_BILLING_ENDPOINT: ${VOLC_BILLING_ENDPOINT:-https://open.volcengineapi.com}
+  VOLC_BILLING_REGION: ${VOLC_BILLING_REGION:-cn-north-1}
+  VOLC_BILLING_SERVICE: ${VOLC_BILLING_SERVICE:-billing}
+  VOLC_BILLING_VERSION: ${VOLC_BILLING_VERSION:-2022-01-01}
+  VOLC_BILLING_SYNC_TTL_MS: ${VOLC_BILLING_SYNC_TTL_MS:-600000}
+  VOLC_BILLING_BALANCE_SYNC_INTERVAL_MS: ${VOLC_BILLING_BALANCE_SYNC_INTERVAL_MS:-300000}
+  VOLC_BILLING_BILL_SYNC_INTERVAL_MS: ${VOLC_BILLING_BILL_SYNC_INTERVAL_MS:-600000}
+  VOLC_BILLING_REQUEST_POLL_INTERVAL_MS: ${VOLC_BILLING_REQUEST_POLL_INTERVAL_MS:-5000}
+  VOLC_BILLING_REQUEST_TIMEOUT_MS: ${VOLC_BILLING_REQUEST_TIMEOUT_MS:-10000}
+  VOLC_BILLING_MAX_RETRIES: ${VOLC_BILLING_MAX_RETRIES:-4}
+  VOLC_BILLING_RETRY_BASE_DELAY_MS: ${VOLC_BILLING_RETRY_BASE_DELAY_MS:-500}
+  VOLC_BILLING_PAGE_DELAY_MS: ${VOLC_BILLING_PAGE_DELAY_MS:-250}
+  PAYMENT_CONFIG_ENCRYPTION_KEY: ${PAYMENT_CONFIG_ENCRYPTION_KEY:-}
+  RESEND_API_KEY: ${RESEND_API_KEY:-}
+  RESEND_FROM: "${RESEND_FROM:-Lindyson AI <noreply@lindyson.com>}"
+  RESEND_NOTIFY_TO: ${RESEND_NOTIFY_TO:-}
+  RESEND_BLOCKED_TO: ${RESEND_BLOCKED_TO:-}
+  QUEUE_CONCURRENCY: ${QUEUE_CONCURRENCY:-2}
+  MEDIA_COMMAND_TIMEOUT_MS: ${MEDIA_COMMAND_TIMEOUT_MS:-60000}
+  MEDIA_COMMAND_MAX_OUTPUT_BYTES: ${MEDIA_COMMAND_MAX_OUTPUT_BYTES:-33554432}
+  ENABLE_FAKE_PROVIDER: ${ENABLE_FAKE_PROVIDER:-false}
+  FAKE_PROVIDER_DELAY_MS: ${FAKE_PROVIDER_DELAY_MS:-1500}
+
+services:
+  seedream-mock:
+    profiles: ["fullstack"]
+    image: node:22-alpine
+    working_dir: /mock
+    command: ["node", "mockSeedreamServer.mjs"]
+    volumes:
+      - ./tests/fullstack/mockSeedreamServer.mjs:/mock/mockSeedreamServer.mjs:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:4400/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lindyson
+      POSTGRES_USER: lindyson
+      # 本地开发默认口令；对外部署时在 .env 里设置 POSTGRES_PASSWORD
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lindyson}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lindyson -d lindyson"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      <<: *api-env
+      # 数据迁移不调用方舟，显式清空以免把生产凭据扩散到一次性容器。
+      ARK_API_KEY: ""
+      ARK_PROMPT_WIZARD_API_KEY: ""
+      REAL_PORTRAIT_PROVIDER_MODE: disabled
+      VOLC_ARK_ASSET_ACCESS_KEY_ID: ""
+      VOLC_ARK_ASSET_SECRET_ACCESS_KEY: ""
+      REAL_PORTRAIT_TOKEN_ENCRYPTION_KEY: ""
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["npm", "--workspace", "apps/api", "run", "db:migrate:prod"]
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment: *api-env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    ports:
+      - "${API_HOST_PORT:-4300}:4300"
+    volumes:
+      - local-storage:/app/storage
+    command: ["npm", "--workspace", "apps/api", "run", "start"]
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment: *api-env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    volumes:
+      - local-storage:/app/storage
+    command: ["npm", "--workspace", "apps/api", "run", "worker:start"]
+
+  nginx:
+    image: ${FULLSTACK_FRONTEND_IMAGE:-lindyson-integration-frontend:local}
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+  nginx-cn:
+    image: ${FULLSTACK_FRONTEND_IMAGE:-lindyson-integration-frontend:local}
+    pull_policy: never
+    depends_on:
+      - api
+    ports:
+      - "8081:80"
+    volumes:
+      - ./infra/nginx/fullstack-cn.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  postgres-data:
+  redis-data:
+  local-storage:

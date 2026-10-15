@@ -1,0 +1,428 @@
+/* 用户端与挂载到 body 的用户浮层共用语义令牌，官网和后台保持独立。 */
+.product-shell,
+.product-popover {
+  --product-canvas: #050507;
+  --product-surface-base: #08080c;
+  --product-surface-card: #0d0d13;
+  --product-surface-raised: #0d0d13;
+  --product-surface-floating: #0b0a12;
+  --product-surface-inset: rgba(255, 255, 255, 0.035);
+  --product-surface-plot: #09090f;
+  --product-surface-warm: #100e0d;
+  --product-text-primary: #f6f3ee;
+  --product-text-secondary: #c1c2d0;
+  --product-text-muted: #a7a9be;
+  --product-border-subtle: rgba(255, 255, 255, 0.08);
+  --product-border-default: rgba(255, 255, 255, 0.1);
+  --product-border-strong: #727487;
+  --product-accent-violet: #7c3aed;
+  --product-accent-fuchsia: #d946ef;
+  --product-accent-pink: #ec4899;
+  --product-accent-blue: #3b82f6;
+  --product-accent-cyan: #22d3ee;
+  --product-focus: #c4b5fd;
+  --product-success: #83d8a7;
+  --product-warning: #f5c66d;
+  --product-error: #ff9a8d;
+  --product-shadow-card: 0 18px 48px rgba(0, 0, 0, 0.22);
+  --product-shadow-floating: 0 28px 80px rgba(0, 0, 0, 0.45);
+  --product-button-bg: #7c3aed;
+  --product-button-fill: linear-gradient(90deg, #7c3aed, #2563eb);
+  --product-button-text: #fffffe;
+  --product-selected-bg: #241b38;
+  --product-hover-bg: #22212b;
+  --product-success-bg: #173025;
+  --product-warning-bg: #352d1d;
+  --product-error-bg: #392323;
+  --product-accent-slate: #94a3b8;
+  --product-accent-warm: #d6a36d;
+  --product-font: "Geist Sans", "MiSans", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --foreground: #f6f3ee;
+  --background: #050507;
+  --motion-fast: 120ms;
+  --motion-standard: 180ms;
+  --motion-slow: 200ms;
+  color-scheme: dark;
+  color: var(--product-text-primary);
+  font-family: var(--product-font);
+  font-synthesis: none;
+}
+
+.product-shell { background: var(--product-canvas); }
+.product-popover { background: var(--product-surface-floating); }
+
+/* 旧共享组件仍供深色后台使用；只在用户主题内把颜色映射到语义令牌。 */
+:is(.product-shell, .product-popover) :where(:is(.text-white, .text-gray-100, .text-gray-200, [class~='text-[#f6f3ee]'], :is([class^='text-white/'], [class*=' text-white/']))) { color: var(--product-text-primary); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='text-amber-'], [class*=' text-amber-']), :is([class^='text-yellow-'], [class*=' text-yellow-']), :is([class^='text-orange-'], [class*=' text-orange-']))) { color: var(--product-warning); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='text-red-'], [class*=' text-red-']), :is([class^='text-rose-'], [class*=' text-rose-']))) { color: var(--product-error); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='text-green-'], [class*=' text-green-']), :is([class^='text-emerald-'], [class*=' text-emerald-']))) { color: var(--product-success); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='border-white/'], [class*=' border-white/']), [class*='divide-white/'] > *)) { border-color: var(--product-border-default); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='bg-white/'], [class*=' bg-white/']), [class~='bg-black/15'], [class~='bg-black/20'], [class~='bg-black/25'], [class~='bg-black/30'])) { background-color: var(--product-surface-inset); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='bg-red-'], [class*=' bg-red-']), :is([class^='bg-rose-'], [class*=' bg-rose-']))) { background-color: var(--product-error-bg); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='bg-green-'], [class*=' bg-green-']), :is([class^='bg-emerald-'], [class*=' bg-emerald-']))) { background-color: var(--product-success-bg); }
+:is(.product-shell, .product-popover) :where(:is(:is([class^='bg-amber-'], [class*=' bg-amber-']), :is([class^='bg-yellow-'], [class*=' bg-yellow-']), :is([class^='bg-orange-'], [class*=' bg-orange-']))) { background-color: var(--product-warning-bg); }
+:is(.product-shell, .product-popover) :where([class*='hover:bg-white/']:hover) { background-color: var(--product-surface-inset); }
+:is(.product-shell, .product-popover) :where([class*='hover:text-white']:hover) { color: var(--product-text-primary); }
+:is(.product-shell, .product-popover) :where(:is(input, textarea, select, button)) { font-family: inherit; }
+:is(.product-shell, .product-popover) :where(:is(h1, h2, h3, h4)) { font-weight: 600; letter-spacing: normal; }
+:is(.product-shell, .product-popover) :where(.font-extrabold) { font-weight: 600; }
+:is(.product-shell, .product-popover) :where(.tabular-nums) { font-variant-numeric: lining-nums tabular-nums; }
+:is(.product-shell, .product-popover) :where(:is([class^='bg-[#'], [class*=' bg-[#']):not([class~='bg-[#7c3aed]']):not([class~='bg-[#fe2c55]'])) { background-color: var(--product-surface-card); }
+
+
+/* 文字保留原有色系，使用较亮色阶以保证深色面板上的可读性。 */
+:is(.product-shell, .product-popover) :where([class^='text-purple-'], [class*=' text-purple-'], [class^='text-violet-'], [class*=' text-violet-'], [class~='text-[var(--product-accent-violet)]']) { color: #c4b5fd; }
+:is(.product-shell, .product-popover) :where(.text-purple-100, .text-violet-100) { color: #f3e8ff; }
+:is(.product-shell, .product-popover) :where([class^='text-pink-'], [class*=' text-pink-']) { color: #f9a8d4; }
+:is(.product-shell, .product-popover) :where([class^='text-fuchsia-'], [class*=' text-fuchsia-']) { color: #e879f9; }
+:is(.product-shell, .product-popover) :where([class^='text-blue-'], [class*=' text-blue-']) { color: #93c5fd; }
+:is(.product-shell, .product-popover) :where([class^='text-cyan-'], [class*=' text-cyan-']) { color: #67e8f9; }
+
+/* 媒体画布与缩略图覆盖控件保持独立语义，不随图片本身的明暗改变。 */
+.product-shell .product-media-surface {
+  --product-surface-base: #08080c;
+  --product-surface-card: #0d0d13;
+  --product-surface-inset: rgb(255 255 255 / 0.08);
+  --product-selected-bg: #241b38;
+  --product-accent-violet: #a78bfa;
+  --product-text-primary: #f5f5f7;
+  --product-text-secondary: #d7d8df;
+  --product-text-muted: #b4b5c2;
+  --product-border-default: rgb(255 255 255 / 0.25);
+  --product-focus: #c4b5fd;
+  --product-success: #86efac;
+  --product-warning: #fde68a;
+  --product-error: #fda4af;
+  color: var(--product-text-primary);
+  color-scheme: dark;
+}
+.product-shell .product-media-surface[class*='text-white'] { color: var(--product-text-primary); }
+.product-shell .product-media-surface :is([class^='bg-gradient-'], [class*=' bg-gradient-']) { background: #08080c; }
+
+:is(.product-shell, .product-popover) :is(.text-gray-300, .text-gray-400) { color: var(--product-text-secondary); }
+:is(.product-shell, .product-popover) :is(.text-gray-500, .text-gray-600) { color: var(--product-text-muted); }
+:is(.product-shell, .product-popover) :is(.text-red-400, .text-red-300) { color: var(--product-error); }
+:is(.product-shell, .product-popover) :is(.text-green-400, .text-emerald-400) { color: var(--product-success); }
+:is(.product-shell, .product-popover) :is([class~='text-[10px]'], [class~='text-[11px]'], [class~='text-[9px]']) { font-size: 12px; }
+:is(.product-shell, .product-popover) :is(input, textarea)::placeholder { color: var(--product-text-muted); opacity: 1; }
+
+.product-shell [data-ui='page-header'] h1 {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.25;
+  color: var(--product-text-primary);
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+}
+.product-shell [data-ui='section-header'] h3 { font-size: 17px; color: var(--product-text-primary); }
+.product-shell [data-ui='card'] {
+  border-radius: 14px;
+  border-color: var(--product-border-default);
+  background: var(--product-surface-card);
+  box-shadow: var(--product-shadow-card);
+  backdrop-filter: none;
+}
+.product-shell [data-ui='card']::before { display: none; }
+.product-shell [data-ui='card']:is([data-variant='modal'], [data-variant='dropdown']) {
+  background: var(--product-surface-floating);
+  box-shadow: var(--product-shadow-floating);
+}
+.product-shell [data-ui='card'][data-variant='media'] { background: var(--product-surface-base); }
+.product-shell [data-ui='card'][data-variant='interactive']:hover { transform: none; border-color: var(--product-focus); }
+/* 原始卡片色彩与渐变；保留当前尺寸、圆角和交互。 */
+.product-shell [data-ui='card']:where([data-accent]:not([data-accent='none'])) {
+  --product-card-accent-rgb: 139 92 246;
+  --product-card-accent-color: var(--product-accent-violet);
+  --product-card-accent-border: rgb(139 92 246 / 0.18);
+  border-color: var(--product-card-accent-border);
+  background:
+    radial-gradient(125% 115% at 0% 0%, rgb(var(--product-card-accent-rgb) / 0.16) 0%, rgb(var(--product-card-accent-rgb) / 0.075) 30%, transparent 64%),
+    linear-gradient(135deg, rgb(255 255 255 / 0.022), transparent 54%),
+    var(--product-surface-card);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), var(--product-shadow-card);
+}
+
+.product-shell [data-ui='card'][data-accent='blue'] {
+  --product-card-accent-rgb: 59 130 246;
+  --product-card-accent-color: var(--product-accent-blue);
+  --product-card-accent-border: rgb(59 130 246 / 0.17);
+}
+
+.product-shell [data-ui='card'][data-accent='pink'] {
+  --product-card-accent-rgb: 236 72 153;
+  --product-card-accent-color: var(--product-accent-pink);
+  --product-card-accent-border: rgb(236 72 153 / 0.16);
+}
+
+.product-shell [data-ui='card'][data-accent='cyan'] {
+  --product-card-accent-rgb: 34 211 238;
+  --product-card-accent-color: var(--product-accent-cyan);
+  --product-card-accent-border: rgb(34 211 238 / 0.14);
+}
+
+.product-shell [data-ui='card'][data-accent='slate'] {
+  --product-card-accent-rgb: 148 163 184;
+  --product-card-accent-color: var(--product-accent-slate);
+  --product-card-accent-border: rgb(148 163 184 / 0.13);
+}
+
+.product-shell [data-ui='card'][data-accent='warm'] {
+  --product-card-accent-rgb: 214 163 109;
+  --product-card-accent-color: var(--product-accent-warm);
+  --product-card-accent-border: rgb(214 163 109 / 0.13);
+  background:
+    radial-gradient(125% 115% at 0% 0%, rgb(var(--product-card-accent-rgb) / 0.11) 0%, rgb(var(--product-card-accent-rgb) / 0.045) 32%, transparent 66%),
+    linear-gradient(135deg, rgb(255 255 255 / 0.018), transparent 54%),
+    var(--product-surface-warm);
+}
+
+.product-shell [data-ui='card'][data-accent='orange'] {
+  --product-card-accent-rgb: 249 115 22;
+  --product-card-accent-color: #fb923c;
+  --product-card-accent-border: rgb(249 115 22 / 0.22);
+  background:
+    radial-gradient(125% 115% at 0% 0%, rgb(249 115 22 / 0.16) 0%, rgb(239 68 68 / 0.075) 32%, transparent 66%),
+    linear-gradient(135deg, rgb(255 255 255 / 0.022), transparent 54%),
+    var(--product-surface-card);
+}
+
+.product-shell .product-card-accent-icon {
+  border-color: rgb(var(--product-card-accent-rgb) / 0.2);
+  background: rgb(var(--product-card-accent-rgb) / 0.13);
+  color: var(--product-card-accent-color);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 8px 24px rgb(var(--product-card-accent-rgb) / 0.08);
+}
+
+.product-shell .product-card-accent-icon svg {
+  color: currentColor;
+}
+
+
+:is(.product-shell, .product-popover) [data-ui='button'] {
+  border-radius: 10px;
+  min-height: 44px;
+  transition: background-color 120ms, border-color 120ms, color 120ms, transform 120ms, filter 120ms;
+  box-shadow: none;
+}
+:is(.product-shell, .product-popover) [data-ui='button']:is([data-variant='primary'], [data-variant='pink']) .lindyson-button-gradient {
+  background: var(--product-button-fill);
+}
+.product-shell button:is([class^='bg-gradient-'], [class*=' bg-gradient-']) { border-radius: 10px; min-height: 44px; }
+:is(.product-shell, .product-popover) [data-ui='button']:is([data-variant='primary'], [data-variant='pink']):not(:disabled):hover { opacity: 1; filter: none; }
+:is(.product-shell, .product-popover) [data-ui='button']:is([data-variant='primary'], [data-variant='pink']):not(:disabled):active { transform: scale(0.98); filter: none; }
+:is(.product-shell, .product-popover) [data-ui='button'][data-variant='secondary']:not(:disabled):hover { background-color: var(--product-hover-bg); }
+.product-shell [data-ui='button'][data-generate-state='queued'] .lindyson-button-gradient { background: var(--product-success-bg); }
+.product-shell [data-ui='button'][data-generate-state='queued'] { color: var(--product-success); opacity: 1; }
+:is(.product-shell, .product-popover) [data-ui='button'][data-variant='pink'],
+.product-shell [data-testid='ai-studio-image-generate-button'] { --product-button-fill: linear-gradient(90deg, #db2777, #7c3aed); }
+.product-shell .lindyson-button-loader { gap: 6px; }
+.product-shell .product-loading-copy { display: inline; }
+
+/* 账期切换独立于通用渐变按钮，避免选中状态改变尺寸或覆盖优惠标签底色。 */
+.product-shell [data-ui='subscription-billing-option'] {
+  height: 44px;
+  min-height: 44px;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--product-text-secondary);
+  transition: background-color 120ms, color 120ms, box-shadow 120ms;
+}
+.product-shell [data-ui='subscription-billing-option']:hover {
+  color: var(--product-button-text);
+}
+.product-shell [data-ui='subscription-billing-option'][aria-pressed='true'] {
+  background: linear-gradient(90deg, var(--color-pink-600), var(--color-purple-600));
+  color: var(--product-button-text);
+  box-shadow: 0 8px 16px rgb(236 72 153 / 0.2);
+}
+.product-shell [data-ui='subscription-billing-badge'] {
+  background-color: #173025;
+  color: #83d8a7;
+}
+.product-shell [data-ui='subscription-billing-option'][aria-pressed='true'] [data-ui='subscription-billing-badge'] {
+  background-color: rgb(255 255 255 / 0.2);
+  color: var(--product-button-text);
+}
+
+:is(.product-shell, .product-popover) :is([data-ui='control'], textarea) {
+  border-color: var(--product-border-strong);
+  border-radius: 10px;
+  background: var(--product-surface-inset);
+  color: var(--product-text-primary);
+  transition: border-color 120ms, background-color 120ms;
+}
+:is(.product-shell, .product-popover) :is([data-ui='control'], textarea):focus { border-color: var(--product-focus); }
+:is(.product-shell, .product-popover) [aria-invalid='true'] { border-color: var(--product-error); }
+:is(.product-shell, .product-popover) :is(button, a, input, textarea, select, [tabindex='0']):focus-visible {
+  outline: 2px solid var(--product-focus);
+  outline-offset: 2px;
+  --tw-ring-color: transparent;
+  --tw-ring-offset-width: 0px;
+}
+.product-shell [aria-invalid='true']:focus-visible { outline-color: var(--product-error); }
+.product-shell [data-ui='card'][aria-invalid='true'] { border-color: var(--product-error); }
+.product-shell .product-field-error { color: var(--product-error); font-size: 13px; line-height: 1.5; }
+
+.product-shell :is([data-ui='studio-tab'], [data-ui='tab']) {
+  min-height: 40px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--product-text-secondary);
+  border-color: transparent;
+  box-shadow: none;
+  transition: background-color 120ms, color 120ms, border-color 120ms;
+}
+.product-shell :is([data-ui='studio-tab'], [data-ui='tab'])[data-state='active'],
+.product-shell .product-sidebar-active {
+  color: var(--product-text-primary);
+  background: var(--product-selected-bg);
+  border-color: transparent;
+  box-shadow: none;
+}
+.product-shell :is([data-ui='studio-tab'], [data-ui='tab']):hover { background-color: var(--product-surface-inset); }
+.product-shell [data-ui='studio-tab'] { --studio-tab-rgb: 139 92 246; --studio-tab-color: #c4b5fd; }
+.product-shell [data-ui='studio-tab'][data-accent='pink'] { --studio-tab-rgb: 236 72 153; --studio-tab-color: #f9a8d4; }
+.product-shell [data-ui='studio-tab'][data-accent='blue'] { --studio-tab-rgb: 59 130 246; --studio-tab-color: #93c5fd; }
+.product-shell [data-ui='studio-tab'][data-accent='cyan'] { --studio-tab-rgb: 34 211 238; --studio-tab-color: #67e8f9; }
+.product-shell [data-ui='studio-tab'] svg { color: var(--studio-tab-color); }
+.product-shell [data-ui='studio-tab'][data-state='active'] {
+  background: radial-gradient(120% 150% at 0% 0%, rgb(var(--studio-tab-rgb) / 0.16), transparent 70%), rgb(255 255 255 / 0.045);
+}
+.product-shell .product-sidebar-active {
+  border-color: var(--product-border-default);
+  background: radial-gradient(90% 140% at 0% 50%, rgb(139 92 246 / 0.13) 0%, rgb(139 92 246 / 0.055) 38%, transparent 72%), rgb(255 255 255 / 0.04);
+}
+.product-shell [role='tabpanel']:not([hidden]):not(.hidden) { animation: product-fade-in 180ms ease-out; }
+.product-shell [data-ui='product-sidebar'] { background: var(--product-surface-base); transition-duration: 200ms; }
+
+.product-shell [data-dialog-root] > [role] { animation: product-fade-in 200ms ease-out; }
+.product-popover { border-color: var(--product-border-default); box-shadow: var(--product-shadow-floating); animation: product-fade-in 200ms ease-out; }
+.product-popover [aria-selected='true'] { background: var(--product-selected-bg); }
+.product-popover :is([aria-pressed='true'], [aria-checked='true']) { background: var(--product-button-bg); border-color: var(--product-focus); color: var(--product-button-text); }
+.product-popover [data-ui='ai-studio-aspect-ratio-frame'] { background: var(--product-selected-bg); border-color: var(--product-focus); box-shadow: none; }
+
+.product-shell .product-media-card {
+  background: var(--product-surface-card);
+  border-color: var(--product-border-default);
+  border-radius: 14px;
+  transition: border-color 120ms;
+}
+.product-shell .product-media-card:is(:hover, :focus-within) { border-color: var(--product-focus); }
+.product-shell .product-media-card[data-selected='true'] { border-color: var(--product-focus); box-shadow: 0 0 0 2px rgb(196 181 253 / 0.2); }
+.product-shell .product-preview-action { opacity: 0; transition: opacity 120ms; }
+.product-shell .product-preview-action[class~='bg-black/15'] { background-color: rgb(0 0 0 / 0.15); }
+.product-shell .product-media-card:is(:hover, :focus-within) .product-preview-action { opacity: 1; }
+.product-shell .product-skeleton { background: var(--product-border-default); border-radius: 8px; animation: product-skeleton 1.6s ease-in-out infinite; }
+.product-shell [data-ui='asset-thumbnail-fallback'] { background: var(--product-surface-base); color: var(--product-text-muted); }
+.product-shell [data-ui='loading-ambient'], .product-shell [data-ui='loading-glow'] { display: none; }
+.product-shell [data-ui='loading-panel'] { background: var(--product-surface-card); }
+.product-shell [data-ui='loading-icon'] { background: var(--product-button-bg); box-shadow: none; }
+.product-shell [data-ui='loading-progress'] { background: var(--product-focus); }
+.product-shell .product-queue-item { animation: product-fade-in 180ms ease-out; }
+.product-shell .product-credit-summary { color: var(--product-text-secondary); font-size: 12px; line-height: 1.6; }
+
+:is(.product-shell, .product-shell *, .product-popover, .product-popover *) { scrollbar-color: #727487 transparent; }
+:is(.product-shell, .product-popover) ::-webkit-scrollbar-thumb { background: #727487; border: 2px solid transparent; background-clip: padding-box; }
+
+@keyframes product-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes product-skeleton { 50% { opacity: 0.55; } }
+
+/* 渐变按钮保留浅色文字，交互与禁用状态继续使用当前反馈规则。 */
+:is(.product-shell, .product-popover) :is([data-ui='button'][data-variant='primary'], [data-ui='button'][data-variant='pink'], button:is([class^='bg-gradient-'], [class*=' bg-gradient-']), [class~='bg-[#7c3aed]']) {
+  color: var(--product-button-text);
+  --product-text-primary: var(--product-button-text);
+}
+:is(.product-shell, .product-popover) [class~='bg-[#7c3aed]'] { background: var(--product-button-bg); }
+:is(.product-shell, .product-popover) :is([data-ui='button'][data-variant='primary'], [data-ui='button'][data-variant='pink'], button:is([class^='bg-gradient-'], [class*=' bg-gradient-']), [class~='bg-[#7c3aed]']):hover:not(:disabled) { box-shadow: 0 6px 18px rgb(124 58 237 / 0.2); }
+:is(.product-shell, .product-popover) :is([data-ui='button'][data-variant='primary'], [data-ui='button'][data-variant='pink'], button:is([class^='bg-gradient-'], [class*=' bg-gradient-']), [class~='bg-[#7c3aed]']):active:not(:disabled) { filter: brightness(0.92); }
+.product-shell [data-ui='button'][data-generate-state='queued'] { color: var(--product-success); }
+:is(.product-shell, .product-popover) [data-ui='button'][data-variant='secondary']:where(:not([aria-invalid='true'])) { color: var(--product-text-secondary); border-color: var(--product-border-default); }
+:is(.product-shell, .product-popover) :is(input:not([type='checkbox']):not([type='radio']), textarea, select, [data-ui='control']) { border-color: var(--product-border-strong); color: var(--product-text-primary); }
+/* 下拉按钮与文字输入框分别设置边框，展开状态仍保留品牌色提示。 */
+:is(.product-shell, .product-popover) button[data-ui='control']:where(:not([aria-invalid='true'])) { border-color: var(--product-border-default); }
+:is(.product-shell, .product-popover) button[data-ui='control']:hover:not(:disabled) { background-color: var(--product-hover-bg); }
+:is(.product-shell, .product-popover) :is([data-ui='button'][data-variant='secondary'], button[data-ui='control'])[aria-expanded='true']:where(:not([aria-invalid='true'])) { border-color: var(--product-focus); background-color: var(--product-selected-bg); }
+:is(.product-shell, .product-popover) :is(input, textarea, select):focus { border-color: var(--product-focus); }
+:is(.product-shell, .product-popover) [aria-invalid='true'] { border-color: var(--product-error); }
+.product-shell :is(textarea[aria-label='视频描述'], textarea#image-prompt, textarea[aria-label='图片描述']) { font-size: 16px; line-height: 1.5; }
+.product-shell [data-ui='product-sidebar'] button { font-size: 14px; }
+.product-shell .product-sidebar-active > [aria-hidden='true'] { background: var(--product-focus); }
+:is(.product-shell, .product-popover) [role='switch'][aria-checked='true'] { background: var(--product-button-bg); }
+:is(.product-shell, .product-popover) [role='switch'][aria-checked='false'] { background: #727487; }
+:is(.product-shell, .product-popover) [role='switch'] > span { background: #fffffe; }
+.product-shell [data-dialog-root] { background-color: rgb(0 0 0 / 0.6); }
+.product-shell [data-sonner-toaster] { font-family: var(--product-font); }
+.product-shell [data-sonner-toast] { --normal-bg: var(--product-surface-floating); --normal-text: var(--product-text-primary); --normal-border: var(--product-border-default); --success-bg: var(--product-success-bg); --success-text: var(--product-success); --success-border: var(--product-success); --error-bg: var(--product-error-bg); --error-text: var(--product-error); --error-border: var(--product-error); --warning-bg: var(--product-warning-bg); --warning-text: var(--product-warning); --warning-border: var(--product-warning); }
+.product-shell .product-media-surface[data-download-state='requested'] { background: var(--product-success-bg); color: var(--product-success); }
+@media (max-width: 639.98px) {
+  .product-shell [data-ui='page-header'] h1 { font-size: 28px; }
+}
+@media (hover: none), (pointer: coarse) {
+  .product-shell .product-preview-action { opacity: 1; }
+  .product-shell .product-queue-action { min-width: 44px; min-height: 44px; }
+  .product-popover button,
+  .product-shell :is([data-ui='control'], [data-ui='product-sidebar'] button, button[aria-label^='关闭']) { min-height: 44px; }
+  :is(.product-shell, .product-popover) :is([data-ui='button'], [data-ui='studio-tab'], [data-ui='tab']) { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.product-shell, .product-popover) *, :is(.product-shell, .product-popover) *::before { animation: none !important; transition: none !important; }
+  :is(.product-shell, .product-popover) :is(button, a):active { transform: none !important; }
+}
+
+/* 收起的移动侧栏不能把离屏阴影投到内容上。 */
+.product-shell #app-sidebar[aria-hidden='true'] { box-shadow: none; }
+.product-shell main > .absolute.inset-x-0.top-0 { box-shadow: 0 2px 8px rgb(13 13 13 / 0.05); }
+.product-shell [data-ui='stat-card-value'] { font-size: 28px; font-weight: 600; letter-spacing: normal; }
+
+.product-shell :is(.text-3xl, .text-4xl):not(h1):not(h2) { font-size: 32px; font-weight: 600; font-variant-numeric: lining-nums tabular-nums; }
+.product-shell .border-dashed { border-color: var(--product-border-strong); }
+/* 透明边框保留按钮尺寸，浅色外框仅用于键盘焦点和明确的状态提示。 */
+:is(.product-shell, .product-popover) [data-ui='button']:is([data-variant='primary'], [data-variant='pink']) { border: 1px solid transparent; }
+.product-shell [data-ui='button'][data-generate-state='queued'] { border-color: var(--product-success); }
+
+/* 禁用只改变可操作状态与底色，不降低整个控件的文字透明度。 */
+:is(.product-shell, .product-popover) :is(button, input, textarea, select, [role='button']):is(:disabled, [aria-disabled='true']) {
+  opacity: 1;
+  color: #c1c2d0;
+  --product-text-primary: #c1c2d0;
+  --product-text-secondary: #c1c2d0;
+  --product-button-bg: #302f3e;
+  --product-button-fill: #302f3e;
+  cursor: not-allowed;
+}
+:is(.product-shell, .product-popover) :is(button, input, textarea, select):disabled:not([data-generate-state='queued']) {
+  background-color: #302f3e;
+  border-color: var(--product-border-strong);
+  filter: none;
+}
+/* 仅弱化普通禁用按钮；媒体覆盖操作和输入控件沿用原有必要边界。 */
+:is(.product-shell, .product-popover) button:disabled:not([data-generate-state='queued'], .product-media-surface, .product-media-surface *) { border-color: var(--product-border-default); }
+/* 分页禁用态保持透明底色，通过图标透明度降低视觉权重。 */
+:is(.product-shell, .product-popover) button.pagination-button:disabled {
+  background: transparent;
+  border: 0;
+  opacity: 0.3;
+}
+.product-shell button:disabled > .absolute.inset-0:is([class^='bg-gradient-'], [class*=' bg-gradient-']) { background: #302f3e; }
+.product-shell [data-ui='button'][data-generate-state='queued']:disabled { color: var(--product-success); }
+.product-shell [data-ui='button'][data-generate-state='queued']:disabled .lindyson-button-gradient { background: var(--product-success-bg); }
+:is(.product-shell, .product-popover) :is(.text-xs, [class~='text-[10px]'], [class~='text-[11px]'], [class~='text-[9px]']) { line-height: 1.5; }
+
+/* 搜索组统一绘制外框，避免内嵌按钮的禁用底色覆盖边缘，并保留完整点击区域。 */
+.product-shell .digital-asset-search::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border: 1px solid var(--product-border-strong);
+  border-radius: inherit;
+}
+.product-shell .digital-asset-search:focus-within::after { border-color: var(--product-focus); }
+.product-shell .digital-asset-search:has(input:focus-visible) {
+  outline: 2px solid var(--product-focus);
+  outline-offset: 2px;
+}
+.product-shell .digital-asset-search > input:focus-visible { outline: none; }
+.product-shell .digital-asset-search > button:focus-visible { outline-offset: -4px; }

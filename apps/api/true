@@ -1,0 +1,158 @@
+[
+  {
+    "name": "083 TK Prompt Seedance 虚构主持人迁移 > 保持已执行 082 原文，只通过新增 083 重建方案内容约束",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/migration083.test.ts"
+  },
+  {
+    "name": "083 TK Prompt Seedance 虚构主持人迁移 > live_presenter 不要求演员 ID，并在三类持久化 JSON 中拒绝旧字段",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/migration083.test.ts"
+  },
+  {
+    "name": "083 TK Prompt Seedance 虚构主持人迁移 > 重复执行会先安全删除同名约束再恢复相同终态",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/migration083.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > release 已进入 eviction_warning 时 start 不创建远端实名会话",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > 已验证上传在 provider fence 前变为 eviction_warning 时不调用 CreateAsset",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > 远端实名会话创建在事务外，返回后授权变化时只保存加密恢复证据且不交付 H5",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > 远端素材创建在事务外，返回后授权变化时保存 Asset ID 并进入幂等清理",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > 实名 finalize 提交结果未知时二次事务保存 token 与加密 H5，重试 start 幂等返回原链接",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > CreateAsset finalize 提交结果未知时用第二事务保存已知 remote ID 并安全交付",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > callback 可用 nonce 中的远端 token 修复 create-response 丢失窗口，并在事务外权威查单",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > 查单 worker 只在 next_retry_at 到期后轮询 invitation_ready，并让到期会话在已到期候选中优先",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > H5 已过期但 next_retry_at 尚未到期时不 claim，也不调用权威查单",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > 权威查单异常按已 claim attempt 指数退避并在 6 小时封顶，且失败落库不重复增加 attempt",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > 已撤回且套餐锁定后迟到 Group 的顺序重放由数据库 claim 栅栏保证只物理删除一次",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > CreateVisualValidateSession 确定失败会回滚 verifying 栅栏，以便本人重试",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人人像供应商提交前状态栅栏 > CreateVisualValidateSession 网络结果不确定时保持 submission_unknown 且不回滚实名栅栏",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "真人肖像本人授权期限 > 从本人同意时刻起固定授权 90 天，并以同一截止时间签发管理令牌",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/realPortraitServiceFences.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 默认 importer 仍为 512m；TK1 专用配置只允许 root 且强制 192m 无 swap 与同步栅栏",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > Seedream 与 Prompt Wizard 现役运营 canary 入口都经过同一 wrapper",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 命令成功时只调用 Provider 一次，并按原始字节 SHA 依次 dry-run 与 apply",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > Provider 命令失败后仍验证已生成证据，保留原退出码且不重试",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 封存前拒绝 manifest 外部 hard link，且错误路径仍返回原 canary rc",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 封存前拒绝被替换为 symlink 的 sidecar，且绝不重跑 Provider",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 容器模式即使宿主 PATH 没有 node，也只执行一次 canary、两次 import 并返回原 rc",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 生产镜像默认 NODE_ENV=production 不会污染 importer-only 容器环境",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 容器 evidence binding 失败时不调用 importer，并保留 canary 原退出码",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 允许 A28 在委托期间创建全新 RID 目录，并在 importer 前按 0700 重新验收",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 容器镜像 ID 漂移、网络缺失和不可挂载路径均在 Provider 委托前失败",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 批准镜像缺少生产 importer 时在 Provider 委托前失败",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 容器镜像和网络必须成对且不接受含空白的镜像引用",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > dry-run 失败时 NO-GO，保留审计输出且绝不第二次执行 Provider",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > dry-run 期间 manifest/evidence 被改写时失败关闭",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 命令成功却没有 manifest 时 NO-GO，且不会伪造账本或调用 importer",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 逐条拒绝运行配置、evidence 路径、record SHA 或 valuation SHA 不一致",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 三项配置任一缺失都在 Provider 前失败关闭",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 缺少 apply 授权、目标数据库或批准指纹时均在 Provider 前失败关闭",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > apply 失败时 NO-GO、保留审计输出且绝不重跑 Provider",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 既有 manifest 或孤立 evidence 路径会在 Provider 前阻止重跑覆盖",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  },
+  {
+    "name": "Provider canary 通用运营留证门禁 > 非规范输出路径或 source run 首尾空白在 Provider 前失败关闭",
+    "file": "/Users/junochow/Documents/Codex/Lindyson AI Video Generator/apps/api/tests/providerOperationalUsageCanaryWrapper.test.ts"
+  }
+]
