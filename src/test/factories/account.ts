@@ -47,6 +47,7 @@ export function createRegisteredAccountUser({ userName, email, now = new Date() 
     orderCount: 0,
     apiCalls: 0,
     ticketCount: 0,
+    acquisition: null,
   };
 
   return { account, user };

@@ -1,3 +1,4 @@
+import type { AcquisitionSource } from '@lindyson/api-contracts';
 export type AdminStatus = 'active' | 'disabled' | 'draft';
 export type OrderStatus = 'paid' | 'pending' | 'refunded' | 'failed';
 export type OrderHistoryFilter = 'all' | OrderStatus;
@@ -139,6 +140,12 @@ export interface AdminOverviewSummary {
     model: string;
     billableTokens: number;
   }>;
+  acquisitionMix: Array<{
+    source: AcquisitionSource;
+    registrations: number;
+    paidUsers: number;
+    revenue: number;
+  }>;
   timezone: string;
   dayStart: string;
   monthStart: string;
@@ -195,6 +202,18 @@ export interface AdminInvoiceRequest {
   note: string;
 }
 
+export interface AdminUserAcquisition {
+  source: AcquisitionSource;
+  rawSource: string | null;
+  medium: string | null;
+  campaign: string | null;
+  content: string | null;
+  term: string | null;
+  referrerHost: string | null;
+  landingPath: string | null;
+  firstTouchAt: string | null;
+}
+
 export interface AdminUser {
   id: string;
   userName: string;
@@ -217,6 +236,7 @@ export interface AdminUser {
   orderCount: number;
   apiCalls: number;
   ticketCount: number;
+  acquisition: AdminUserAcquisition | null;
 }
 
 export interface AdminUserSubscriptionExpected {

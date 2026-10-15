@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { adminAcquisitionMixItemSchema, adminUserAcquisitionSchema } from './acquisition.js';
 import {
   emailSchema,
   exactCursorPaginationSchema,
@@ -2586,6 +2587,7 @@ export const adminUserSchema = z.object({
   activeSubscriptionOrderId: uuidSchema.nullable(),
   registeredAt: isoDateTimeSchema,
   lastActiveAt: nullableIsoDateTimeSchema,
+  acquisition: adminUserAcquisitionSchema.nullable().default(null),
 });
 
 export const adminAuditLogSchema = z.object({
@@ -2662,6 +2664,7 @@ export const adminOverviewSchema = z.object({
   sevenDayApiSuccessRate: percentageIntegerSchema,
   revenueTrend: z.array(z.object({ day: isoDateSchema, revenue: nonnegativeIntegerSchema, orders: nonnegativeIntegerSchema })),
   modelUsage: z.array(z.object({ model: nonemptyStringSchema, billableTokens: nonnegativeIntegerSchema })),
+  acquisitionMix: z.array(adminAcquisitionMixItemSchema),
   timezone: nonemptyStringSchema,
   dayStart: isoDateTimeSchema,
   monthStart: isoDateTimeSchema,

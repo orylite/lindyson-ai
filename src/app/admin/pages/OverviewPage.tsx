@@ -1,3 +1,4 @@
+import { ACQUISITION_SOURCE_LABELS } from '@lindyson/api-contracts';
 import {
   Activity,
   Bot,
@@ -6,6 +7,7 @@ import {
   FileText,
   KeyRound,
   MessageSquare,
+  Share2,
   TrendingUp,
   UserCog,
   Users,
@@ -59,6 +61,7 @@ export function AdminOverviewPage({ summary, plans, setActiveTab, setDetail }: {
     [summary],
   );
   const usageMixSorted = useMemo(() => buildUsageMix(summary?.modelUsage ?? []), [summary]);
+  const acquisitionMix = useMemo(() => buildAcquisitionMix(summary?.acquisitionMix ?? []), [summary]);
   const modelUsageTotal = useMemo(
     () => (summary?.modelUsage ?? []).reduce((total, item) => total + item.billableTokens, 0),
     [summary],
@@ -229,6 +232,47 @@ export function AdminOverviewPage({ summary, plans, setActiveTab, setDetail }: {
         </Card>
       </div>
 
+      <Card variant="raised" data-admin-ui="chart-panel" className="p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-white">注册来源分布</h2>
+            <p className="mt-1 text-xs text-gray-500">本月新注册账号按推广链接与来源站点归类，历史用户无来源不计入</p>
+          </div>
+          <Badge variant="blue">本月</Badge>
+        </div>
+        {!summary ? (
+          <div className="h-[72px]"><UnavailablePanel label="来源统计暂不可用" /></div>
+        ) : acquisitionMix.length === 0 ? (
+          <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-6 text-center text-sm text-gray-500">本月暂无带来源记录的注册</div>
+        ) : (
+          <div aria-label="注册来源分布明细" className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {acquisitionMix.map(item => (
+              <button
+                key={item.source}
+                type="button"
+                data-ui="admin-acquisition-row"
+                onClick={() => setActiveTab('users')}
+                className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3 text-left transition-[background-color,border-color] duration-[180ms] hover:border-white/[0.13] hover:bg-white/[0.045]"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-white">
+                    <Share2 className="h-3.5 w-3.5 text-gray-400" />
+                    {item.label}
+                  </span>
+                  <span className="text-xs text-gray-400">{item.share}%</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div className="h-full rounded-full bg-[#60a5fa]" style={{ width: `${item.share}%` }} />
+                </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  注册 {number(item.registrations)} · 付费 {number(item.paidUsers)} · 收入 {money(item.revenue)}
+                </p>
+              </button>
+            ))}
+          </div>
+        )}
+      </Card>
+
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <Card variant="raised" data-admin-ui="alert-panel" className="p-5 xl:col-span-2">
           <div className="mb-4 flex items-center justify-between">
@@ -341,6 +385,18 @@ function formatSignedCny(value: string | null) {
     minimumFractionDigits: 6,
     maximumFractionDigits: 6,
   })}`;
+}
+
+/** 来源分布：按注册数排序并计算占比，占比四舍五入后总和可能略偏离 100。 */
+export function buildAcquisitionMix(items: AdminOverviewSummary['acquisitionMix']) {
+  const total = items.reduce((sum, item) => sum + item.registrations, 0);
+  return [...items]
+    .sort((a, b) => b.registrations - a.registrations || b.revenue - a.revenue || a.source.localeCompare(b.source))
+    .map(item => ({
+      ...item,
+      label: ACQUISITION_SOURCE_LABELS[item.source] ?? item.source,
+      share: total > 0 ? Math.round((item.registrations / total) * 100) : 0,
+    }));
 }
 
 function UnavailablePanel({ label }: { label: string }) {

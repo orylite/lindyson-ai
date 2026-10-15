@@ -27,6 +27,7 @@ import { formatRetryAfterMs,paymentAttemptStatusLabel,refundAttemptStatusLabel }
 import { generationJobDisplayStatus,generationJobReviewMessage } from '../../data/generationJobState';
 import { getPlanIconGradientClass,getPlanIconGradientForPlan,getPlanIconOption,PLAN_ICON_OPTIONS } from '../../data/planIcons';
 import { createClientId } from '../../utils/clientId';
+import { ACQUISITION_SOURCE_LABELS } from '@lindyson/api-contracts';
 import { Badge,Button,Card,Select } from '../../ui';
 import { centsToYuan,formatCnyFromCents,yuanToCents } from '../../utils/currency';
 import type { ExactCursorPagination,PagePosition } from '../../api/cursor';
@@ -1313,11 +1314,37 @@ export function InvoiceDetail({ invoice, order }: { invoice: AdminInvoiceRequest
   );
 }
 
+/** 注册来源徽章：历史用户没有记录时显示「未知」。 */
+export function acquisitionBadge(acquisition: AdminUser['acquisition']) {
+  if (!acquisition) return <Badge variant="default">未知</Badge>;
+  const variant: BadgeVariant = acquisition.source === 'direct' ? 'default'
+    : acquisition.source === 'referral' ? 'purple'
+    : acquisition.source === 'other' ? 'warning'
+    : 'blue';
+  return <Badge variant={variant}>{ACQUISITION_SOURCE_LABELS[acquisition.source]}</Badge>;
+}
+
+function describeAcquisition(acquisition: AdminUser['acquisition']) {
+  if (!acquisition) return '-';
+  const parts = [
+    acquisition.rawSource ? `原始值 ${acquisition.rawSource}` : null,
+    acquisition.medium ? `形式 ${acquisition.medium}` : null,
+    acquisition.campaign ? `活动 ${acquisition.campaign}` : null,
+    acquisition.content ? `内容 ${acquisition.content}` : null,
+    acquisition.term ? `关键词 ${acquisition.term}` : null,
+    acquisition.referrerHost ? `来源站点 ${acquisition.referrerHost}` : null,
+    acquisition.landingPath ? `落地页 ${acquisition.landingPath}` : null,
+  ].filter((part): part is string => part !== null);
+  return parts.length > 0 ? parts.join(' · ') : '-';
+}
+
 export function UserDetail({ user }: { user: AdminUser }) {
   return (
     <DetailGrid rows={[
       ['用户名', user.userName],
       ['邮箱', user.email],
+      ['注册来源', acquisitionBadge(user.acquisition)],
+      ['来源明细', describeAcquisition(user.acquisition)],
       ['套餐', user.planName],
       ['计费周期', user.billingCycle === 'yearly' ? '年付' : '月付'],
       ['周期开始时间', user.planCycleStartedAt],

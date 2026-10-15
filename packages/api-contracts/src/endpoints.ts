@@ -1,4 +1,5 @@
 import { referralCodeSchema, referralSettingsSchema, referralStatusSchema, referralPageSchema, referralSummarySchema } from './referrals.js';
+import { acquisitionSourceSchema, registrationAttributionSchema } from './acquisition.js';
 import { mcpEndpointContracts } from './mcp.js';
 import { z } from 'zod';
 import {
@@ -257,6 +258,7 @@ const adminUsersQuery = z.object({
   ...adminPageQueryShape,
   search: adminSearchSchema,
   status: userStatusSchema.optional(),
+  source: acquisitionSourceSchema.optional(),
 }).strict();
 const adminOrdersQuery = z.object({
   ...adminPageQueryShape,
@@ -619,6 +621,7 @@ const registerCodeBody = z.object({
 
 const registerBody = z.object({
   referralCode: referralCodeSchema.optional(),
+  attribution: registrationAttributionSchema.optional(),
   userName: nonemptyStringSchema.min(2).max(30),
   email: emailSchema,
   password: z.string().min(8).max(32).regex(/[A-Za-z]/).regex(/[0-9]/).refine(value => !/\s/.test(value)),
