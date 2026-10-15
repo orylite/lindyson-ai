@@ -43,7 +43,7 @@
   "dependencies": {
     "@lindyson/api-contracts": "0.1.0",
     "@tanstack/react-query": "5.104.2",
-    "lucide-react": "0.487.0",
+    "lucide-react": "1.55.0",
     "motion": "12.23.24",
     "qrcode.react": "^4.2.0",
     "react": "18.3.1",
