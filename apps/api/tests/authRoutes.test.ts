@@ -172,7 +172,10 @@ describe('authRoutes', () => {
           password: 'Password123',
           verificationId,
           verificationCode,
-          attribution: { source: 'xhs', campaign: 'launch-2610', landingPath: '/', firstTouchAt: '2026-10-16T08:00:00.000Z' },
+          attribution: {
+            source: 'xhs', campaign: 'launch-2610', landingPath: '/', firstTouchAt: '2026-10-16T08:00:00.000Z',
+            visitorId: '6f1c2a9e-3b4d-4e5f-8a7b-9c0d1e2f3a4b',
+          },
         },
       });
 
@@ -181,6 +184,7 @@ describe('authRoutes', () => {
       const acquisitionCall = clientQuery.mock.calls.find(([sql]) => String(sql).includes('INSERT INTO user_acquisitions'));
       expect(acquisitionCall?.[1]).toEqual([
         userId, 'xiaohongshu', 'xhs', null, 'launch-2610', null, null, null, '/', '2026-10-16T08:00:00.000Z',
+        '6f1c2a9e-3b4d-4e5f-8a7b-9c0d1e2f3a4b',
       ]);
       expect(queries.some(query => query.includes('FROM plans'))).toBe(false);
       expect(queries.some(query => query.includes('credit_ledger'))).toBe(false);

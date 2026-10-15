@@ -1,4 +1,4 @@
-import type { AcquisitionSource } from '@lindyson/api-contracts';
+import type { AcquisitionSource, TrafficRange } from '@lindyson/api-contracts';
 export type AdminStatus = 'active' | 'disabled' | 'draft';
 export type OrderStatus = 'paid' | 'pending' | 'refunded' | 'failed';
 export type OrderHistoryFilter = 'all' | OrderStatus;
@@ -112,6 +112,22 @@ export interface AdminOrder {
   refundedAt?: string;
 }
 
+export interface AdminTrafficSourceItem {
+  source: AcquisitionSource;
+  visitors: number;
+  newVisitors: number;
+  registrations: number;
+  paidUsers: number;
+  revenue: number;
+}
+
+export interface AdminTrafficRange {
+  visitors: number;
+  newVisitors: number;
+  registrations: number;
+  items: AdminTrafficSourceItem[];
+}
+
 export interface AdminOverviewSummary {
   totalUsers: number;
   todayNewUsers: number;
@@ -140,12 +156,7 @@ export interface AdminOverviewSummary {
     model: string;
     billableTokens: number;
   }>;
-  acquisitionMix: Array<{
-    source: AcquisitionSource;
-    registrations: number;
-    paidUsers: number;
-    revenue: number;
-  }>;
+  trafficSources: Record<TrafficRange, AdminTrafficRange>;
   timezone: string;
   dayStart: string;
   monthStart: string;

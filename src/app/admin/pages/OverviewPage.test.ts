@@ -36,18 +36,31 @@ describe('管理员仪表盘模型使用占比', () => {
   });
 });
 
-describe('管理员仪表盘注册来源分布', () => {
-  it('按注册数排序、换成中文标签并计算占比', async () => {
-    const { buildAcquisitionMix } = await import('./OverviewPage');
-    const result = buildAcquisitionMix([
-      { source: 'direct', registrations: 1, paidUsers: 0, revenue: 0 },
-      { source: 'xiaohongshu', registrations: 3, paidUsers: 1, revenue: 19900 },
+describe('管理员仪表盘流量来源', () => {
+  it('按访客数排序、换成中文标签，计算访客占比与注册转化', async () => {
+    const { buildTrafficSources } = await import('./OverviewPage');
+    const result = buildTrafficSources({
+      visitors: 40,
+      newVisitors: 30,
+      registrations: 3,
+      items: [
+        { source: 'direct', visitors: 10, newVisitors: 5, registrations: 1, paidUsers: 0, revenue: 0 },
+        { source: 'xiaohongshu', visitors: 30, newVisitors: 25, registrations: 2, paidUsers: 1, revenue: 19900 },
+      ],
+    });
+    expect(result.items.map(item => [item.label, item.share, item.conversion])).toEqual([
+      ['小红书', 75, '6.7%'],
+      ['直接访问', 25, '10%'],
     ]);
-    expect(result.map(item => [item.label, item.share])).toEqual([['小红书', 75], ['直接访问', 25]]);
   });
 
-  it('没有记录时不报错，占比为 0', async () => {
-    const { buildAcquisitionMix } = await import('./OverviewPage');
-    expect(buildAcquisitionMix([])).toEqual([]);
+  it('只有注册没有访客记录的来源（如上线前的访客）转化率显示为 —', async () => {
+    const { buildTrafficSources, formatConversion } = await import('./OverviewPage');
+    const result = buildTrafficSources({
+      visitors: 0, newVisitors: 0, registrations: 1,
+      items: [{ source: 'referral', visitors: 0, newVisitors: 0, registrations: 1, paidUsers: 0, revenue: 0 }],
+    });
+    expect(result.items[0]).toMatchObject({ label: '邀约', share: 0, conversion: '—' });
+    expect(formatConversion(0, 20)).toBe('0%');
   });
 });

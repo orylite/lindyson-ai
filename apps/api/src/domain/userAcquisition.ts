@@ -2,6 +2,7 @@ import {
   normalizeAcquisitionSource,
   type AcquisitionSource,
   type RegistrationAttribution,
+  type VisitAttribution,
 } from '@lindyson/api-contracts';
 import type { DbClient } from '../db/pool.js';
 
@@ -15,6 +16,7 @@ export interface ResolvedAcquisition {
   referrerHost: string | null;
   landingPath: string | null;
   firstTouchAt: string | null;
+  visitorId: string | null;
 }
 
 /**
@@ -24,7 +26,7 @@ export interface ResolvedAcquisition {
  * - 什么都没有：记 direct（注册当下的事实，而不是留空）。
  */
 export function resolveRegistrationAcquisition(
-  attribution: RegistrationAttribution | undefined,
+  attribution: RegistrationAttribution | VisitAttribution | undefined,
   hasReferralCode: boolean,
 ): ResolvedAcquisition {
   const rawSource = attribution?.source?.trim() || null;
@@ -43,14 +45,15 @@ export function resolveRegistrationAcquisition(
     referrerHost: attribution?.referrerHost ?? null,
     landingPath: attribution?.landingPath ?? null,
     firstTouchAt: attribution?.firstTouchAt ?? null,
+    visitorId: attribution && 'visitorId' in attribution ? attribution.visitorId ?? null : null,
   };
 }
 
 export async function recordUserAcquisitionWithClient(client: DbClient, userId: string, acquisition: ResolvedAcquisition) {
   await client.query(
     `INSERT INTO user_acquisitions (
-       user_id, source, raw_source, medium, campaign, content, term, referrer_host, landing_path, first_touch_at
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       user_id, source, raw_source, medium, campaign, content, term, referrer_host, landing_path, first_touch_at, visitor_id
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
      ON CONFLICT (user_id) DO NOTHING`,
     [
       userId,
@@ -63,6 +66,7 @@ export async function recordUserAcquisitionWithClient(client: DbClient, userId: 
       acquisition.referrerHost,
       acquisition.landingPath,
       acquisition.firstTouchAt,
+      acquisition.visitorId,
     ],
   );
 }
