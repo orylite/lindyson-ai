@@ -1,0 +1,13 @@
+# gitleaks 配置：下列路径里的命中已逐一核实，都是单元测试的假值或 SQL 字段名，不是真实密钥。
+[extend]
+useDefault = true
+
+[allowlist]
+description = "测试夹具与迁移脚本中的非密钥字符串"
+paths = [
+  '''apps/api/migrations/03[678]_.*\.sql''',
+  '''apps/api/tests/.*\.test\.ts''',
+  '''packages/api-contracts/test/.*\.test\.ts''',
+  '''src/.*\.test\.ts''',
+  '''scripts/run-fullstack-tests\.mjs''',
+]

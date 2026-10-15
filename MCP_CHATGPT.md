@@ -1,4 +1,4 @@
-# Lindyson ChatGPT / Codex MCP 接入与运维
+# Lindyson ChatGPT / Codex MCP 接入说明
 
 ## 适用范围
 
@@ -8,7 +8,7 @@
 
 ## 用户接入
 
-先在 Lindyson 账户中心打开“MCP 连接”，复制共用地址。生产地址为 `https://www.lindyson.com/mcp`。
+先在 Lindyson 账户中心打开“MCP 连接”，复制共用地址。地址由部署方的 `MCP_PUBLIC_URL` 决定，形如 `https://<你的域名>/mcp`。
 
 ### ChatGPT
 
@@ -28,7 +28,7 @@
 安装 Codex CLI 的用户也可以执行：
 
 ```sh
-codex mcp add lindyson --url https://www.lindyson.com/mcp
+codex mcp add lindyson --url https://<你的域名>/mcp
 codex mcp login lindyson
 ```
 
@@ -106,26 +106,10 @@ Vite 已代理 MCP/OAuth；Docker 和主站 OpenResty 模板包含入口。反�
 
 更换 OAuth 加密密钥会使已有 OAuth 会话不可读取，须先通知用户并撤销旧连接；更换附件密钥前应等待待处理导入清空。不应直接覆盖密钥并继续使用旧密文。
 
-## 验证与交付边界
-
-2026-10-03 权限声明与上传中断修复已部署至共用 COM/HK 后端，版本 `mcp-auth-upload-20261002T221433Z`。API 与 worker 已更新，11 个工具的权限主字段、兼容镜像及三版协议检查通过；公网 OAuth 发现、未授权访问拒绝和 COM/CN 健康检查通过，五个后台队列消费者均已连接。保留全部环境值、OAuth 与附件密钥、数据库和 Redis；无新增迁移或回滚备份，前端继续使用 `mcp-refresh-20261002T203701Z`。详见[部署核验](artifacts/mcp/auth-upload-fixes/deployment/部署核验.md)。完整 `npm run check` 通过；输入格式归一化收尾后，再次通过 API 2,632 项测试与构建、MCP 独立全栈 4 项。测试增加了 11 个工具的权限主字段和兼容镜像校验，并覆盖上传取消、临时文件清理、租约失效及交接后队列报错。详见[本地验证记录](artifacts/mcp/auth-upload-fixes/验证记录.md)。
+## 验证
 
 - `npm run check`：共享契约、前后端类型、单元测试、浏览器回归及构建。
 - `npm run test:fullstack`：独立 Docker 项目内真实 PostgreSQL、Redis、API、worker、浏览器；使用模拟生成供应商，每次生成临时 OAuth 密钥。
 - `npm run test:fullstack -- mcp.spec.ts`：定向 MCP 验收。附件测试仅在独立测试进程替换 HTTPS/DNS 网络响应，生产代码没有下载白名单后门；真实文件仍经过下载限额、类型识别、上传会话和媒体 worker。
 
-2026-10-03 连接刷新与复制对齐已发布到 COM/CN 双站，版本 `mcp-refresh-20261002T203701Z`。用户确认本次同步且不新增回滚备份；双站 117 文件完整清单与健康检查通过，后端保持 `mcp-clients-20261002T180235Z`。详见[部署核验](artifacts/mcp/connection-refresh/deployment/部署核验.md)。新增浏览器专项 10 项通过；MCP 定向全栈增至 4 项通过，新增独立账户的“空列表 → 外部真实 OAuth 授权 → 返回自动刷新 → 手动刷新保留内容 → 页面撤销与令牌拒绝”验收。前端类型与构建、API 2,604 项测试及构建通过。完整检查的浏览器结果为 189 项通过、9 项历史跳过、1 项既有 TK 页面文字对比度失败；该用例独立复测通过，后续检查已补跑，不视为一次完整检查全部通过。测试退出与清理过程、日志和三档视口截图见[本地验证记录](artifacts/mcp/connection-refresh/验证记录.md)。
-
-初版完整全栈为 60 项通过、1 项历史退役用例跳过；初版记录见[本地验证记录](artifacts/mcp/验证记录.md)。本轮 ChatGPT / Codex 定向全栈三项通过，覆盖原生回调、客户端名称、刷新、撤销，以及图解图片加载与放大关闭。手机布局复测通过。
-
-本轮 `npm run check` 的契约 43 项、前端单元 512 项和浏览器 179 项通过，9 项历史用例跳过；支付轮询一项在并行构建期间超时，停止并行构建后独立复测通过，未修改支付代码。补跑剩余检查：前端类型检查与生产构建、API 2,604 项测试及构建通过。不将分项补跑记作单次完整 `check` 成功。
-
-2026-10-03 图解修正已发布为前端版本 `mcp-guide-20261002T182238Z`：URL 旁增加复制图标，编号移至原图两侧独立留白，以引线连接框线。COM/CN 双站 117 文件完整清单核验通过；后端继续运行 `mcp-clients-20261002T180235Z`，本轮无后端重启。详见[图解修正核验](artifacts/mcp/guide-polish/部署核验.md)。
-
-2026-10-03 初版经用户确认部署 `chatgpt-mcp-20261002T174453Z`，本轮继续更新为 `mcp-clients-20261002T180235Z`。COM/HK 后端与 COM/CN 前端均已上线，未新增回滚备份。生产 MCP 已启用，固定地址为 `https://www.lindyson.com/mcp`；源码默认开关仍关闭。初版已应用迁移 089，本轮无新增迁移。
-
-API 和 worker 使用同一镜像；OAuth 与附件密钥通过环境变量注入，部署时必须保留。正式图片进入私有对象存储桶；数据库只保存归属、对象键与状态。API 只监听本机回环地址，公网经反向代理进入。
-
-本轮核验双站 117 文件完整清单、API/worker 健康、OAuth 发现、ChatGPT/Codex 动态注册、错误回调拒绝、PKCE S256、未授权 MCP 的 401 提示，以及登录态账户中心与图解。截图在双站返回 PNG，内容哈希与用户原图一致；标注由界面叠加。已清理公网探针对象，未创建用户授权或付费任务。详见[双客户端部署核验](artifacts/mcp/clients-deployment/部署核验.md)。后续 VPS 同步与重建仍须按 `AGENTS.md` 确认。
-
-真实 ChatGPT / Codex 完整客户端验收尚未执行。客户端验收时必须记录账号/工作区类型、客户端日期及实际成功的图片/视频/音频类型，并完成“添加地址 → 登录或已有登录 → 授权 → 图片导入或选取本人资产 → 图生视频 → 查询 → 下载 → 网站积分核对 → 撤销”。本地协议测试和已安装 Codex CLI 的注册元数据采样不能替代真实客户端文件、OAuth 回调及界面兼容验收。
+部署到自己的环境后，建议至少核验：OAuth 发现文档（`/.well-known/oauth-authorization-server`）、动态客户端注册与 PKCE S256、未授权访问 `/mcp` 返回 401、账户中心能看到并撤销连接，以及一次完整的“添加地址 → 登录 → 授权 → 导入图片或选取本人资产 → 图生视频 → 查询 → 下载 → 积分核对 → 撤销”流程。真实 ChatGPT 与 Codex 客户端的行为会随其版本变化，验收时记录账号类型、客户端版本和实际成功的媒体类型。

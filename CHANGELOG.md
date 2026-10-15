@@ -1,0 +1,15 @@
+# 更新日志
+
+格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循语义化版本。
+
+## [未发布]
+
+### 新增
+
+- 首个开源版本：Vite + React 前端、Fastify API 与 BullMQ worker、api-contracts 契约包、89 个数据库迁移、Playwright 端到端与 Docker 全栈测试、MCP 服务端与 OAuth 2.1 接入。
+
+### 变更
+
+- 运营主体、备案与法律联系信息改为读取 `publicCompliance.local.json`，仓库只保留占位模板。
+- 站点地址、客服二维码、Seedream 教程媒体目录改为 `VITE_` 环境变量。
+- 火山引擎教程演示媒体与首页母版素材不再随仓库分发。

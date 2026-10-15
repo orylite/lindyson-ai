@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: 类型检查、单元测试与构建
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: 契约包
+        run: npm run check:contracts
+      - name: 前端类型检查
+        run: npm run typecheck
+      - name: 前端单元测试
+        run: npx vitest run
+      - name: 前端构建
+        run: npm run build
+      - name: API 类型检查与单元测试
+        run: npm run check:api
+      - name: API 构建
+        run: npm run build:api
+
+  e2e:
+    name: 端到端测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    # 需要浏览器且耗时较长，只在主分支推送和手动触发时运行；fork 的 PR 不运行。
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chrome
+      - run: npm run build:contracts
+      - run: npx playwright test --project=desktop-chrome
+        env:
+          CI: 'true'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
