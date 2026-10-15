@@ -6,6 +6,24 @@
 
 > English: Lindyson AI Video Generator is an AI video and image generation workspace for e-commerce and short-video teams, built on Volcengine Ark (Seedance / Seedream). It ships a React front end, a Fastify API with a BullMQ worker, PostgreSQL, Redis, credit-based billing, an admin console, and an MCP server with OAuth 2.1. The UI and docs are in Simplified Chinese.
 
+**在线体验：[www.lindyson.com](https://www.lindyson.com)**
+
+![Lindyson AI 首页](docs/screenshots/landing-hero.webp)
+
+## 预览
+
+| 工作台仪表盘 | AI Studio：视频生成 |
+|---|---|
+| ![仪表盘](docs/screenshots/dashboard.webp) | ![AI Studio](docs/screenshots/ai-studio.webp) |
+| **数字资产** | **TikTok 账号管理** |
+| ![数字资产](docs/screenshots/digital-assets.webp) | ![TikTok 账号](docs/screenshots/tiktok-accounts.webp) |
+| **发布至 TikTok** | **账户中心：积分与 MCP 连接** |
+| ![发布至 TikTok](docs/screenshots/tiktok-publish.webp) | ![账户中心](docs/screenshots/account-center.webp) |
+| **管理后台** | **官网：发布预览** |
+| ![管理后台](docs/screenshots/admin-dashboard.webp) | ![发布预览](docs/screenshots/landing-publish-preview.webp) |
+| **官网：套餐定价** | **官网：FAQ** |
+| ![套餐定价](docs/screenshots/landing-pricing.webp) | ![FAQ](docs/screenshots/landing-faq.webp) |
+
 ## 功能
 
 - **AI Studio**：文生视频、图生视频、参考素材复用、商品图生成与交互式编辑，提示词向导把商品信息转成分镜脚本。
