@@ -167,11 +167,14 @@ docker compose --env-file .env.demo -f docker-compose.yml -f docker-compose.demo
 | 方舟 API Key | 登录 [火山引擎控制台](https://console.volcengine.com/ark)，进入"火山方舟"，在"API Key 管理"创建一个 Key；然后在"开通管理"里开通这几个模型：Seedance 2.0（含 fast、mini）、Seedance 2.5、Seedream 5.0 Pro、Doubao Seed 2.0 lite（提示词引擎用）。按量计费，先充少量余额即可。 | `ARK_API_KEY` |
 | 对象存储 | 在火山引擎 TOS 新建一个私有读写的桶，再到"访问控制 IAM"里创建一个只有该桶读写权限的子用户，拿到 Access Key。任何兼容 S3 的存储也可以用。 | `STORAGE_DRIVER=tos` 与 `TOS_*` |
 
+> [!TIP]
+> 不想绑死在火山引擎上也行。生成能力走的是独立的供应商层（`apps/api/src/providers/`），视频和图片各自一个接口。想接 ChatGPT 的 Image 系列、Google 的 Nano Banana，或者其他主流生图、生视频模型，照着现有的方舟实现加一个供应商就能并行提供给用户选。
+
 ### 按功能可选：不填该功能就关闭
 
 | 功能 | 要什么 | 填到哪 |
 |---|---|---|
-| 提示词引擎 | 默认复用上面的方舟 Key，只要开通了 Doubao Seed 2.0 lite 模型就能用；要分开计费可以另建一个 Key | `ARK_PROMPT_WIZARD_API_KEY` |
+| 提示词引擎 | 默认复用上面的方舟 Key，只要开通了 Doubao Seed 2.0 lite 模型就能用；要分开计费可以另建一个 Key。这一层也是可换的：DeepSeek 或其他多模态模型都能拿来写方案，换个模型、改改策略，说不定就能玩出不一样的东西 | `ARK_PROMPT_WIZARD_API_KEY` |
 | 真人演员库 | 火山引擎 IAM 子用户的 Access Key，调用方舟 Assets API。不能复用方舟 API Key | `REAL_PORTRAIT_PROVIDER_MODE=volcengine` 与 `VOLC_ARK_ASSET_*` |
 | 成本报表 | 火山引擎费用中心的只读 Access Key，用于在后台核对账单和资源包 | `VOLC_BILLING_*` |
 | 事务邮件 | [Resend](https://resend.com) 账号，并验证一个发信域名 | `RESEND_*` |
