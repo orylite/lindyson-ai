@@ -1,0 +1,56 @@
+name: Bug 报告
+description: 功能不符合预期
+labels: [bug]
+body:
+  - type: textarea
+    id: symptom
+    attributes:
+      label: 现象
+      description: 描述你看到的问题，可以附截图或日志。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 提交或版本
+      placeholder: 例如 v0.1.0 或 main 上的提交哈希
+    validations:
+      required: true
+  - type: dropdown
+    id: deploy
+    attributes:
+      label: 部署方式
+      options:
+        - 本地 dev（npm run dev）
+        - docker compose（生产栈）
+        - docker compose（demo 一键试玩）
+        - 其他
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 浏览器 / Node 版本
+      placeholder: 例如 Chrome 141 / Node 22.12
+  - type: textarea
+    id: logs
+    attributes:
+      label: 相关日志
+      description: API 或浏览器控制台输出，会自动按代码块格式化。请先去掉密钥和个人信息。
+      render: shell

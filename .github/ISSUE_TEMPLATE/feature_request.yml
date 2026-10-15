@@ -1,0 +1,24 @@
+name: 功能建议
+description: 想要的新能力或改进
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解决什么问题
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议的做法
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案
+  - type: textarea
+    id: notes
+    attributes:
+      label: 补充说明
