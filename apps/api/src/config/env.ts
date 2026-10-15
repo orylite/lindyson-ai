@@ -23,6 +23,27 @@ const booleanString = z.preprocess(value => {
   return value;
 }, z.boolean());
 
+/**
+ * 反向代理信任设置，语义与 Fastify 的 trustProxy 一致：
+ * - `false`：不信任任何代理头（API 直接暴露时用）；
+ * - `true`：信任所有上游，只能在 API 端口完全不可直连时使用；
+ * - 正整数：信任最近的 N 跳代理；
+ * - 逗号分隔的 IP / CIDR 列表：只信任这些地址发来的 X-Forwarded-* 头，生产推荐。
+ */
+export const trustProxySetting = z.preprocess(value => {
+  if (typeof value !== 'string') return value;
+  const normalized = value.trim();
+  const lowered = normalized.toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(lowered)) return lowered === '1' ? 1 : true;
+  if (['false', '0', 'no', 'off', ''].includes(lowered)) return false;
+  if (/^[1-9]\d*$/.test(normalized)) return Number(normalized);
+  return normalized.split(',').map(item => item.trim()).filter(Boolean);
+}, z.union([
+  z.boolean(),
+  z.number().int().positive(),
+  z.array(z.string().min(1)).min(1),
+]));
+
 const resendFrom = z.preprocess(
   value => value === '' || value === undefined ? 'Lindyson AI <noreply@lindyson.com>' : value,
   z.string(),
@@ -39,7 +60,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   HOST: z.string().default('0.0.0.0'),
   PORT: z.coerce.number().int().positive().default(4300),
-  TRUST_PROXY: booleanString.default(false),
+  TRUST_PROXY: trustProxySetting.default(false),
   DATABASE_URL: z.string().url().default('postgres://lindyson:lindyson@localhost:5432/lindyson'),
   REDIS_URL: z.string().url().default('redis://localhost:6379'),
   JWT_SECRET: z.string().min(16).default(DEVELOPMENT_JWT_SECRET),
