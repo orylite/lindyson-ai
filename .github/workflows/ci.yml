@@ -23,9 +23,10 @@ permissions:
 env:
   TZ: Asia/Shanghai
 
+# main 上的推送排队执行而不互相取消，避免频繁的文档提交把前一轮 e2e 取消；PR 内的连续推送仍取消旧运行。
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
@@ -58,8 +59,8 @@ jobs:
     name: 端到端测试
     runs-on: ubuntu-latest
     timeout-minutes: 40
-    # 需要浏览器且耗时较长，只在主分支推送和手动触发时运行；fork 的 PR 不运行。
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    # 需要浏览器且耗时较长，只在主分支推送和手动触发时运行；fork 的 PR 不运行；只改文档的提交（docs: 前缀）跳过。
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'docs'))
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
