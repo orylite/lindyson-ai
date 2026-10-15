@@ -70,6 +70,18 @@
 
 ---
 
+## 🌱 Our Vision
+
+> We hope that one day a small seller, with no photographer and no editing team, can make videos as good-looking as a big brand's from a single product photo.
+>
+> We hope this system does not just run in our hands. Everyone who deploys it can serve the sellers around them well, so more good products get seen by more people.
+>
+> We also hope it keeps growing: someone plugs in a new model, someone rewrites the prompts to understand their category better, someone finds a use we never thought of, and brings that back so the next person has an easier start.
+>
+> Doing business should not be a game only big companies get to play. A little more open tooling means a little more opportunity.
+
+---
+
 ## 📸 Screenshots
 
 ### Website
