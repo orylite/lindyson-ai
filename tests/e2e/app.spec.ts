@@ -10,6 +10,7 @@ const PUBLIC_COMPLIANCE_ICP_LABEL = PUBLIC_COMPLIANCE_FOR_TESTS.registrations.ic
 const VITE_ENV_FOR_TESTS = loadViteEnvForTests();
 const SUPPORT_QR_CONFIGURED = Boolean(VITE_ENV_FOR_TESTS.VITE_SUPPORT_QR_URL?.trim());
 const PUBLIC_SITE_URL_FOR_TESTS = expectedPublicSiteUrl(VITE_ENV_FOR_TESTS);
+const TUTORIAL_MEDIA_BASE_URL = (VITE_ENV_FOR_TESTS.VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL ?? '').trim().replace(/\/+$/, '');
 
 const registerCode = '135790';
 const verificationId = '00000000-0000-4000-8000-000000000001';
@@ -10271,9 +10272,11 @@ test('AI 图片使用紧凑下拉并支持 @图片与 @标记引用', async ({ p
 });
 
 test('AI 图片交互编辑教程使用本地媒体并完整支持响应式弹窗交互', async ({ page }) => {
+  // 演示媒体是火山引擎官方素材，不随仓库分发；没有配置媒体目录时无法验证播放与布局。
+  test.skip(!TUTORIAL_MEDIA_BASE_URL, '未设置 VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL，跳过教程媒体用例');
   const runtimeErrors: string[] = [];
   page.on('console', message => {
-    if (message.type() === 'error' && message.location().url.includes('/tutorials/')) {
+    if (message.type() === 'error' && message.location().url.includes(`${TUTORIAL_MEDIA_BASE_URL}/`)) {
       runtimeErrors.push(`console: ${message.text()}`);
     }
   });
@@ -10302,13 +10305,13 @@ test('AI 图片交互编辑教程使用本地媒体并完整支持响应式弹�
   const video = dialog.getByTestId('seedream-tutorial-video');
   const inputImage = dialog.getByRole('img', { name: '交互编辑输入图：狗与孔雀海报组合图' });
   const outputImage = dialog.getByRole('img', { name: '交互编辑输出图：狗被定位放入孔雀海报后的成品图' });
-  await expect(video).toHaveAttribute('src', '/tutorials/seedream-interactive-editing.mp4');
-  await expect(video).toHaveAttribute('poster', '/tutorials/seedream-interactive-editing-poster.webp');
+  await expect(video).toHaveAttribute('src', `${TUTORIAL_MEDIA_BASE_URL}/seedream-interactive-editing.mp4`);
+  await expect(video).toHaveAttribute('poster', `${TUTORIAL_MEDIA_BASE_URL}/seedream-interactive-editing-poster.webp`);
   await expect(video).toHaveAttribute('controls', '');
   await expect(video).toHaveAttribute('playsinline', '');
   await expect(video).toHaveAttribute('preload', 'metadata');
-  await expect(inputImage).toHaveAttribute('src', '/tutorials/seedream-interactive-input.webp');
-  await expect(outputImage).toHaveAttribute('src', '/tutorials/seedream-interactive-output.webp');
+  await expect(inputImage).toHaveAttribute('src', `${TUTORIAL_MEDIA_BASE_URL}/seedream-interactive-input.webp`);
+  await expect(outputImage).toHaveAttribute('src', `${TUTORIAL_MEDIA_BASE_URL}/seedream-interactive-output.webp`);
   await expect.poll(() => video.evaluate(element => (element as HTMLVideoElement).readyState)).toBeGreaterThanOrEqual(1);
   expect(await video.evaluate(element => ({
     autoplay: (element as HTMLVideoElement).autoplay,

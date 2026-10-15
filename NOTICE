@@ -1,0 +1,21 @@
+Lindyson AI
+Copyright 2026 Lindyson AI contributors
+
+本产品以 Apache License 2.0 发布（见 LICENSE）。"Lindyson" 名称与标识不随代码授权，见 TRADEMARK.md。
+
+以下第三方资源随仓库分发，各自遵循其原许可：
+
+字体
+- MiSans（Regular / Medium / Semibold，public/fonts/MiSans-*.woff2）：版权归小米所有，按《MiSans 字体知识产权许可协议》免费使用，允许随软件分发，不得单独售卖或修改；许可全文见 public/fonts/MiSans-License.pdf，来源 https://hyperos.mi.com/font
+- Geist Sans（public/fonts/Geist-Variable.woff2）：版权归 Vercel 所有，SIL Open Font License 1.1，许可全文见 public/fonts/Geist-OFL.txt，来源 https://github.com/vercel/geist-font
+
+图片与视频
+- 首页 iPhone 样机（public/landing/iphone17pro-*）：导出自 Figma 社区文件 "iPhone 16 & 17 Free Mockup"，作者 Richard（@ricvath），CC BY 4.0，https://www.figma.com/community/file/1064512555184175821 。iPhone 是 Apple Inc. 的商标，样机仅用于展示本产品的发布预览，不表示 Apple 背书。
+- 首页商品图与视频（public/landing/*-source.*、*-campaign.*）：由本项目用 AI 生成，不含真实品牌；生成记录见 src/imports/landing-masters/PROVENANCE.md。
+- 设计规范与 TikTok 发布界面示例图：运行时从 Unsplash 热链加载，遵循 Unsplash License，仅作占位，见 ATTRIBUTIONS.md。
+- 支付宝标识（src/imports/alipay-logo.png）：支付宝是蚂蚁集团的商标，仅用于标示支付方式。
+- Seedream 交互编辑教程的演示视频与图片属于火山引擎官方文档，未取得再分发授权，不随仓库分发；部署方可自行放置并通过 VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL 指定地址，见 ATTRIBUTIONS.md。
+
+代码
+- UI 组件思路参考 shadcn/ui（MIT）。
+- 其余 npm 依赖的许可见各自 package.json，均为 MIT、Apache-2.0、ISC、BSD、MPL-2.0、BlueOak-1.0.0、0BSD 或 LGPL-3.0（sharp 的 libvips 预编译件，动态链接）。
