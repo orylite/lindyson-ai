@@ -1,4 +1,4 @@
-import { ACQUISITION_SOURCE_LABELS } from '@lindyson/api-contracts';
+import { ACQUISITION_SOURCE_LABELS,type TrafficRange } from '@lindyson/api-contracts';
 import {
   Activity,
   Bot,
@@ -15,11 +15,12 @@ import {
   XCircle,
   type LucideIcon,
 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo,useState } from 'react';
 import { Area,AreaChart,Cell,Pie,PieChart,ResponsiveContainer,Tooltip,XAxis,YAxis } from 'recharts';
 import {
   type AdminOverviewSummary,
   type AdminPlan,
+  type AdminTrafficRange,
 } from '../../data/admin';
 import { Badge,Card } from '../../ui';
 
@@ -61,7 +62,11 @@ export function AdminOverviewPage({ summary, plans, setActiveTab, setDetail }: {
     [summary],
   );
   const usageMixSorted = useMemo(() => buildUsageMix(summary?.modelUsage ?? []), [summary]);
-  const acquisitionMix = useMemo(() => buildAcquisitionMix(summary?.acquisitionMix ?? []), [summary]);
+  const [trafficRange, setTrafficRange] = useState<TrafficRange>('today');
+  const traffic = useMemo(
+    () => (summary ? buildTrafficSources(summary.trafficSources[trafficRange]) : null),
+    [summary, trafficRange],
+  );
   const modelUsageTotal = useMemo(
     () => (summary?.modelUsage ?? []).reduce((total, item) => total + item.billableTokens, 0),
     [summary],
@@ -233,43 +238,68 @@ export function AdminOverviewPage({ summary, plans, setActiveTab, setDetail }: {
       </div>
 
       <Card variant="raised" data-admin-ui="chart-panel" className="p-5">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold text-white">注册来源分布</h2>
-            <p className="mt-1 text-xs text-gray-500">本月新注册账号按推广链接与来源站点归类，历史用户无来源不计入</p>
+            <h2 className="text-sm font-semibold text-white">流量来源</h2>
+            <p className="mt-1 text-xs text-gray-500">访客按推广链接与来源站点归类，同一访客同一天同一来源算一次；注册与收入按注册时的来源统计</p>
           </div>
-          <Badge variant="blue">本月</Badge>
-        </div>
-        {!summary ? (
-          <div className="h-[72px]"><UnavailablePanel label="来源统计暂不可用" /></div>
-        ) : acquisitionMix.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-6 text-center text-sm text-gray-500">本月暂无带来源记录的注册</div>
-        ) : (
-          <div aria-label="注册来源分布明细" className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {acquisitionMix.map(item => (
+          <div role="tablist" aria-label="流量来源时间范围" className="flex gap-1 rounded-xl border border-white/[0.07] bg-white/[0.025] p-1">
+            {TRAFFIC_RANGE_TABS.map(tab => (
               <button
-                key={item.source}
+                key={tab.id}
                 type="button"
-                data-ui="admin-acquisition-row"
-                onClick={() => setActiveTab('users')}
-                className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3 text-left transition-[background-color,border-color] duration-[180ms] hover:border-white/[0.13] hover:bg-white/[0.045]"
+                role="tab"
+                aria-selected={trafficRange === tab.id}
+                onClick={() => setTrafficRange(tab.id)}
+                className={`rounded-lg px-3 py-1 text-xs transition-colors ${trafficRange === tab.id ? 'bg-white/10 font-semibold text-white' : 'text-gray-400 hover:text-white'}`}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-2 text-sm font-semibold text-white">
-                    <Share2 className="h-3.5 w-3.5 text-gray-400" />
-                    {item.label}
-                  </span>
-                  <span className="text-xs text-gray-400">{item.share}%</span>
-                </div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-                  <div className="h-full rounded-full bg-[#60a5fa]" style={{ width: `${item.share}%` }} />
-                </div>
-                <p className="mt-2 text-xs text-gray-500">
-                  注册 {number(item.registrations)} · 付费 {number(item.paidUsers)} · 收入 {money(item.revenue)}
-                </p>
+                {tab.label}
               </button>
             ))}
           </div>
+        </div>
+        {!summary || !traffic ? (
+          <div className="h-[72px]"><UnavailablePanel label="来源统计暂不可用" /></div>
+        ) : (
+          <>
+            <div className="mb-4 grid grid-cols-3 gap-3">
+              <TrafficStat label="访客" value={number(traffic.visitors)} helper={`新访客 ${number(traffic.newVisitors)}`} />
+              <TrafficStat label="注册" value={number(traffic.registrations)} helper="带来源记录的新注册" />
+              <TrafficStat label="注册转化" value={formatConversion(traffic.registrations, traffic.visitors)} helper="注册 ÷ 访客" />
+            </div>
+            {traffic.items.length === 0 ? (
+              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-6 text-center text-sm text-gray-500">该时间段暂无访客来源记录</div>
+            ) : (
+              <div aria-label="流量来源明细" className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {traffic.items.map(item => (
+                  <button
+                    key={item.source}
+                    type="button"
+                    data-ui="admin-acquisition-row"
+                    onClick={() => setActiveTab('users')}
+                    className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3 text-left transition-[background-color,border-color] duration-[180ms] hover:border-white/[0.13] hover:bg-white/[0.045]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2 text-sm font-semibold text-white">
+                        <Share2 className="h-3.5 w-3.5 text-gray-400" />
+                        {item.label}
+                      </span>
+                      <span className="text-xs text-gray-400">访客 {number(item.visitors)} · {item.share}%</span>
+                    </div>
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                      <div className="h-full rounded-full bg-[#60a5fa]" style={{ width: `${item.share}%` }} />
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500">
+                      新访客 {number(item.newVisitors)} · 注册 {number(item.registrations)}（{item.conversion}）
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500">
+                      付费 {number(item.paidUsers)} · 收入 {money(item.revenue)}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </Card>
 
@@ -387,16 +417,43 @@ function formatSignedCny(value: string | null) {
   })}`;
 }
 
-/** 来源分布：按注册数排序并计算占比，占比四舍五入后总和可能略偏离 100。 */
-export function buildAcquisitionMix(items: AdminOverviewSummary['acquisitionMix']) {
-  const total = items.reduce((sum, item) => sum + item.registrations, 0);
-  return [...items]
-    .sort((a, b) => b.registrations - a.registrations || b.revenue - a.revenue || a.source.localeCompare(b.source))
-    .map(item => ({
-      ...item,
-      label: ACQUISITION_SOURCE_LABELS[item.source] ?? item.source,
-      share: total > 0 ? Math.round((item.registrations / total) * 100) : 0,
-    }));
+const TRAFFIC_RANGE_TABS: Array<{ id: TrafficRange; label: string }> = [
+  { id: 'today', label: '今日' },
+  { id: 'sevenDays', label: '近 7 天' },
+  { id: 'month', label: '本月' },
+];
+
+function TrafficStat({ label, value, helper }: { label: string; value: string; helper: string }) {
+  return (
+    <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3">
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="mt-1 text-lg font-bold text-white">{value}</p>
+      <p className="mt-1 text-[11px] text-gray-500">{helper}</p>
+    </div>
+  );
+}
+
+/** 注册转化率：没有访客时显示 —，避免除零与无意义的百分比。 */
+export function formatConversion(registrations: number, visitors: number) {
+  if (visitors <= 0) return '—';
+  const rate = (registrations / visitors) * 100;
+  return `${rate >= 10 || rate === 0 ? Math.round(rate) : rate.toFixed(1)}%`;
+}
+
+/** 流量来源：按访客数排序（同访客数按注册数），计算各来源访客占比与注册转化率。 */
+export function buildTrafficSources(range: AdminTrafficRange) {
+  const totalVisitors = range.items.reduce((sum, item) => sum + item.visitors, 0);
+  return {
+    ...range,
+    items: [...range.items]
+      .sort((a, b) => b.visitors - a.visitors || b.registrations - a.registrations || a.source.localeCompare(b.source))
+      .map(item => ({
+        ...item,
+        label: ACQUISITION_SOURCE_LABELS[item.source] ?? item.source,
+        share: totalVisitors > 0 ? Math.round((item.visitors / totalVisitors) * 100) : 0,
+        conversion: formatConversion(item.registrations, item.visitors),
+      })),
+  };
 }
 
 function UnavailablePanel({ label }: { label: string }) {

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { captureAttribution, clearAttribution, detectVisitAttribution } from './attribution';
+import { captureAttribution, clearAttribution, detectVisitAttribution, ensureVisitorId, reportVisit } from './attribution';
 
 const DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse('2026-10-16T08:00:00.000Z');
@@ -29,6 +29,7 @@ describe('注册来源采集', () => {
       campaign: 'launch-2610',
       landingPath: '/',
       firstTouchAt: '2026-10-16T08:00:00.000Z',
+      visitorId: expect.stringMatching(/^[0-9a-f-]{36}$/),
     });
   });
 
@@ -75,7 +76,9 @@ describe('注册来源采集', () => {
     browser('https://lindyson.com/login', 'https://lindyson.com/', store);
     expect(captureAttribution(NOW + 1000)).toMatchObject({ source: 'bilibili', campaign: 'review', landingPath: '/' });
     clearAttribution();
-    expect(store.size).toBe(0);
+    // 注册成功只清除首次来源；匿名访客编号保留，之后的回访仍按同一访客统计。
+    expect(store.has('lindyson:acquisition')).toBe(false);
+    expect(store.has('lindyson:visitor')).toBe(true);
   });
 
   it('超长参数会被截断，存储损坏时回退为直接访问', () => {
@@ -86,5 +89,102 @@ describe('注册来源采集', () => {
     store.set('lindyson:acquisition', '{broken');
     browser('https://lindyson.com/', '', store);
     expect(captureAttribution(NOW)).toMatchObject({ source: 'direct' });
+  });
+});
+
+describe('访客来源上报', () => {
+  function stubBeacon() {
+    const sendBeacon = vi.fn((_url: string, _body: Blob) => true);
+    vi.stubGlobal('navigator', { sendBeacon, webdriver: false });
+    return sendBeacon;
+  }
+
+  async function payload(sendBeacon: ReturnType<typeof stubBeacon>, index = 0) {
+    const [url, blob] = sendBeacon.mock.calls[index]!;
+    return { url, body: JSON.parse(await blob.text()) };
+  }
+
+  it('新访客带推广参数到站：上报一次，标记为新访客并带站点域名', async () => {
+    browser('https://www.lindyson.com/?utm_source=douyin&utm_campaign=c1');
+    const sendBeacon = stubBeacon();
+    expect(reportVisit(NOW)).toBe(true);
+    const { url, body } = await payload(sendBeacon);
+    expect(url).toBe('/api/public/visits');
+    expect(body).toMatchObject({
+      isNewVisitor: true,
+      site: 'www.lindyson.com',
+      attribution: { source: 'douyin', campaign: 'c1', landingPath: '/' },
+    });
+    expect(body.visitorId).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
+  it('同一天同一来源刷新不重复上报；换来源或跨天再上报', () => {
+    const store = browser('https://lindyson.com/?utm_source=douyin');
+    const sendBeacon = stubBeacon();
+    expect(reportVisit(NOW)).toBe(true);
+    expect(reportVisit(NOW + 60_000)).toBe(false);
+    browser('https://lindyson.com/', 'https://www.zhihu.com/question/1', store);
+    expect(reportVisit(NOW + 120_000)).toBe(true);
+    browser('https://lindyson.com/?utm_source=douyin', '', store);
+    expect(reportVisit(NOW + DAY)).toBe(true);
+    expect(sendBeacon).toHaveBeenCalledTimes(3);
+  });
+
+  it('站内跳转不上报；无任何信号的外部到站记为直接访问', async () => {
+    const store = browser('https://lindyson.com/login', 'https://lindyson.com/');
+    const sendBeacon = stubBeacon();
+    expect(reportVisit(NOW)).toBe(false);
+    browser('https://lindyson.com/', '', store);
+    expect(reportVisit(NOW)).toBe(true);
+    expect((await payload(sendBeacon)).body.attribution.source).toBe('direct');
+  });
+
+  it('首页跳登录页带同样的推广参数时被当日去重', () => {
+    const store = browser('https://lindyson.com/?utm_source=bilibili');
+    const sendBeacon = stubBeacon();
+    reportVisit(NOW);
+    browser('https://lindyson.com/login?utm_source=bilibili', 'https://lindyson.com/', store);
+    expect(reportVisit(NOW + 5_000)).toBe(false);
+    expect(sendBeacon).toHaveBeenCalledTimes(1);
+  });
+
+  it('邀约链接没有推广参数时归为邀约', async () => {
+    browser('https://lindyson.com/register?ref=ABCDEFGH', 'https://mp.weixin.qq.com/s/x');
+    const sendBeacon = stubBeacon();
+    reportVisit(NOW);
+    expect((await payload(sendBeacon)).body.attribution).toMatchObject({ source: 'referral', referrerHost: 'mp.weixin.qq.com' });
+  });
+
+  it('自动化浏览器不上报', () => {
+    browser('https://lindyson.com/?utm_source=douyin');
+    const sendBeacon = vi.fn(() => true);
+    vi.stubGlobal('navigator', { sendBeacon, webdriver: true });
+    expect(reportVisit(NOW)).toBe(false);
+    expect(sendBeacon).not.toHaveBeenCalled();
+  });
+
+  it('sendBeacon 不可用时回退到 keepalive fetch', () => {
+    browser('https://lindyson.com/');
+    vi.stubGlobal('navigator', { webdriver: false });
+    const fetchMock = vi.fn(async () => new Response(null, { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    expect(reportVisit(NOW)).toBe(true);
+    expect(fetchMock).toHaveBeenCalledWith('/api/public/visits', expect.objectContaining({ method: 'POST', keepalive: true, credentials: 'omit' }));
+  });
+
+  it('访客编号在 30 天内保持不变并顺延，过期后换新编号', () => {
+    const store = browser('https://lindyson.com/');
+    const first = ensureVisitorId(NOW).id;
+    expect(ensureVisitorId(NOW + 20 * DAY).id).toBe(first);
+    expect(ensureVisitorId(NOW + 45 * DAY).id).toBe(first);
+    expect(ensureVisitorId(NOW + 80 * DAY).id).not.toBe(first);
+    expect(store.has('lindyson:visitor')).toBe(true);
+  });
+
+  it('注册归因带上同一个访客编号', () => {
+    browser('https://lindyson.com/?utm_source=zhihu');
+    stubBeacon();
+    const visitorId = ensureVisitorId(NOW).id;
+    expect(captureAttribution(NOW)).toMatchObject({ source: 'zhihu', visitorId });
   });
 });

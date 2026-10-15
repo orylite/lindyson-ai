@@ -165,7 +165,7 @@ docker compose --env-file .env.demo -f docker-compose.yml -f docker-compose.demo
 - 🧠 **提示词引擎**：从商品图识别事实，按目标市场和口播语言生成三套可执行的分镜提示词。
 - 🗂️ **数字资产**：上传、文件夹、缩略图、批量操作，图片与视频统一管理。
 - 💳 **积分与订阅**：套餐、加购包、积分流水、订单与发票。支付通道在后台配置。
-- 🛠️ **管理后台**：用户、订单、工单、公告、支付通道、供应商用量与成本报表。推广链接带 `?utm_source=xiaohongshu`（或短写 `?from=xhs`）即可按平台统计注册与收入。
+- 🛠️ **管理后台**：用户、订单、工单、公告、支付通道、供应商用量与成本报表。推广链接带 `?utm_source=xiaohongshu`（或短写 `?from=xhs`）即可按平台统计访客、注册与收入。
 - 🔌 **MCP 接入**：标准 MCP 服务端加 OAuth 2.1 动态注册与 PKCE，ChatGPT 与 Codex 可直接导入素材并发起生成，见 [MCP_CHATGPT.md](MCP_CHATGPT.md)。
 - 📱 **TikTok 发布**：账号管理与发布预览，成片直接推到 TikTok。
 - 🧑 **真人演员库**：真人肖像授权、活体校验与撤回流程，敏感信息加密存储。

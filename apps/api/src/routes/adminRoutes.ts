@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { endpointContracts, normalizeAcquisitionSource } from '@lindyson/api-contracts';
+import { endpointContracts, normalizeAcquisitionSource, TRAFFIC_RANGES, type AcquisitionSource, type TrafficRange } from '@lindyson/api-contracts';
 import type { z } from 'zod';
 import { requireAdmin } from '../auth/session.js';
 import {
@@ -347,6 +347,57 @@ export async function registerAdminRoutes(app: FastifyInstance) {
            date_trunc('day', now() AT TIME ZONE 'Asia/Shanghai') AT TIME ZONE 'Asia/Shanghai' AS day_start,
            date_trunc('month', now() AT TIME ZONE 'Asia/Shanghai') AT TIME ZONE 'Asia/Shanghai' AS month_start
        ),
+       traffic_ranges AS (
+         SELECT 'today'::text AS range, day_start AS range_start FROM boundaries
+         UNION ALL SELECT 'sevenDays', day_start - interval '6 days' FROM boundaries
+         UNION ALL SELECT 'month', month_start FROM boundaries
+       ),
+       -- 访客：同一访客同一天同一来源已在入库时去重；跨天按访客去重，一个访客在区间内来自多个来源时各来源各计一次。
+       traffic_visits AS (
+         SELECT tr.range, vv.source,
+                count(DISTINCT vv.visitor_id)::int AS visitors,
+                count(DISTINCT vv.visitor_id) FILTER (WHERE vv.is_new_visitor)::int AS new_visitors
+         FROM traffic_ranges tr
+         JOIN visitor_visits vv ON vv.created_at >= tr.range_start
+         GROUP BY tr.range, vv.source
+       ),
+       traffic_visit_totals AS (
+         SELECT tr.range,
+                count(DISTINCT vv.visitor_id)::int AS visitors,
+                count(DISTINCT vv.visitor_id) FILTER (WHERE vv.is_new_visitor)::int AS new_visitors
+         FROM traffic_ranges tr
+         LEFT JOIN visitor_visits vv ON vv.created_at >= tr.range_start
+         GROUP BY tr.range
+       ),
+       traffic_paid AS (
+         SELECT user_id, sum(amount) AS revenue
+         FROM orders
+         WHERE status = 'paid'
+         GROUP BY user_id
+       ),
+       -- 注册与收入：按注册时归因的来源，统计区间内新注册的账号及其累计已付金额。
+       traffic_registrations AS (
+         SELECT tr.range, ua.source,
+                count(*)::int AS registrations,
+                count(*) FILTER (WHERE tp.user_id IS NOT NULL)::int AS paid_users,
+                coalesce(sum(tp.revenue), 0)::bigint AS revenue
+         FROM traffic_ranges tr
+         JOIN users u ON u.registered_at >= tr.range_start
+         JOIN user_acquisitions ua ON ua.user_id = u.id
+         LEFT JOIN traffic_paid tp ON tp.user_id = u.id
+         GROUP BY tr.range, ua.source
+       ),
+       traffic_rows AS (
+         SELECT coalesce(v.range, r.range) AS range,
+                coalesce(v.source, r.source) AS source,
+                coalesce(v.visitors, 0) AS visitors,
+                coalesce(v.new_visitors, 0) AS new_visitors,
+                coalesce(r.registrations, 0) AS registrations,
+                coalesce(r.paid_users, 0) AS paid_users,
+                coalesce(r.revenue, 0) AS revenue
+         FROM traffic_visits v
+         FULL OUTER JOIN traffic_registrations r ON r.range = v.range AND r.source = v.source
+       ),
        revenue_days AS (
          SELECT generate_series(
            day_start - interval '6 days',
@@ -493,30 +544,21 @@ export async function registerAdminRoutes(app: FastifyInstance) {
          (SELECT coalesce(
             jsonb_agg(
               jsonb_build_object(
+                'range', range,
                 'source', source,
+                'visitors', visitors,
+                'newVisitors', new_visitors,
                 'registrations', registrations,
                 'paidUsers', paid_users,
                 'revenue', revenue
-              ) ORDER BY registrations DESC, revenue DESC, source ASC
+              ) ORDER BY range, visitors DESC, registrations DESC, source ASC
             ),
             '[]'::jsonb
-          ) FROM (
-            SELECT ua.source,
-                   count(*)::int AS registrations,
-                   count(*) FILTER (WHERE paid.user_id IS NOT NULL)::int AS paid_users,
-                   coalesce(sum(paid.revenue), 0)::bigint AS revenue
-            FROM user_acquisitions ua
-            JOIN users u ON u.id = ua.user_id
-            CROSS JOIN boundaries
-            LEFT JOIN (
-              SELECT user_id, sum(amount) AS revenue
-              FROM orders
-              WHERE status = 'paid'
-              GROUP BY user_id
-            ) paid ON paid.user_id = u.id
-            WHERE u.registered_at >= month_start
-            GROUP BY ua.source
-          ) acquisition_mix) AS acquisition_mix,
+          ) FROM traffic_rows) AS traffic_rows,
+         (SELECT coalesce(
+            jsonb_object_agg(range, jsonb_build_object('visitors', visitors, 'newVisitors', new_visitors)),
+            '{}'::jsonb
+          ) FROM traffic_visit_totals) AS traffic_totals,
          (SELECT day_start FROM boundaries) AS day_start,
          (SELECT month_start FROM boundaries) AS month_start,
          (SELECT sync_status FROM cost_sync_health) AS cost_sync_status,
@@ -552,7 +594,7 @@ export async function registerAdminRoutes(app: FastifyInstance) {
           : 100,
         revenueTrend: mapAdminRevenueTrend(row.revenue_trend),
         modelUsage: mapAdminModelUsage(row.model_usage),
-        acquisitionMix: mapAdminAcquisitionMix(row.acquisition_mix),
+        trafficSources: mapAdminTrafficSources(row.traffic_rows, row.traffic_totals),
         timezone: 'Asia/Shanghai',
         dayStart: toIsoDateTime(row.day_start),
         monthStart: toIsoDateTime(row.month_start),
@@ -2372,17 +2414,37 @@ function mapAdminModelUsage(value: unknown) {
   });
 }
 
-function mapAdminAcquisitionMix(value: unknown) {
-  if (!Array.isArray(value)) return [];
-  return value.flatMap(item => {
-    if (!isRecord(item) || typeof item.source !== 'string') return [];
-    return [{
-      source: normalizeAcquisitionSource(item.source) ?? 'other' as const,
-      registrations: toInt(item.registrations),
-      paidUsers: toInt(item.paidUsers),
-      revenue: toInt(item.revenue),
-    }];
-  });
+function mapAdminTrafficSources(rowsValue: unknown, totalsValue: unknown) {
+  const empty = () => ({ visitors: 0, newVisitors: 0, registrations: 0, items: [] as Array<{
+    source: AcquisitionSource; visitors: number; newVisitors: number; registrations: number; paidUsers: number; revenue: number;
+  }> });
+  const ranges = { today: empty(), sevenDays: empty(), month: empty() };
+  const isRange = (value: unknown): value is TrafficRange => typeof value === 'string' && (TRAFFIC_RANGES as readonly string[]).includes(value);
+  if (Array.isArray(rowsValue)) {
+    for (const item of rowsValue) {
+      if (!isRecord(item) || !isRange(item.range) || typeof item.source !== 'string') continue;
+      const target = ranges[item.range];
+      const row = {
+        source: normalizeAcquisitionSource(item.source) ?? 'other' as const,
+        visitors: toInt(item.visitors),
+        newVisitors: toInt(item.newVisitors),
+        registrations: toInt(item.registrations),
+        paidUsers: toInt(item.paidUsers),
+        revenue: toInt(item.revenue),
+      };
+      target.items.push(row);
+      target.registrations += row.registrations;
+    }
+  }
+  if (isRecord(totalsValue)) {
+    for (const range of TRAFFIC_RANGES) {
+      const total = totalsValue[range];
+      if (!isRecord(total)) continue;
+      ranges[range].visitors = toInt(total.visitors);
+      ranges[range].newVisitors = toInt(total.newVisitors);
+    }
+  }
+  return ranges;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

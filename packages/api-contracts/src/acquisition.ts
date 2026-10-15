@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isoDateTimeSchema, nonnegativeIntegerSchema } from './primitives.js';
+import { isoDateTimeSchema, nonnegativeIntegerSchema, uuidSchema } from './primitives.js';
 
 /** 注册来源白名单：推广链接的 utm_source / from 不在表内时服务端归为 other，并保留原值。 */
 export const ACQUISITION_SOURCES = [
@@ -76,8 +76,8 @@ export function normalizeAcquisitionSource(raw: string | null | undefined): Acqu
 
 const attributionTextSchema = (max: number) => z.string().trim().min(1).max(max);
 
-/** 注册时随请求体提交的来源信息，由前端在首页或登录页首次访问时采集。 */
-export const registrationAttributionSchema = z.object({
+/** 一次访问的来源信息，由前端在首页或登录页到站时采集。 */
+export const visitAttributionSchema = z.object({
   source: attributionTextSchema(64),
   medium: attributionTextSchema(64).optional(),
   campaign: attributionTextSchema(128).optional(),
@@ -87,7 +87,22 @@ export const registrationAttributionSchema = z.object({
   landingPath: attributionTextSchema(255).optional(),
   firstTouchAt: isoDateTimeSchema.optional(),
 }).strict();
+export type VisitAttribution = z.infer<typeof visitAttributionSchema>;
+
+/** 注册时随请求体提交的来源信息：首次到站来源 + 浏览器匿名访客 ID，用于把注册与访客关联。 */
+export const registrationAttributionSchema = visitAttributionSchema.extend({
+  visitorId: uuidSchema.optional(),
+}).strict();
 export type RegistrationAttribution = z.infer<typeof registrationAttributionSchema>;
+
+/** 访客来源上报：同一访客同一天同一来源只入库一次，服务端统一返回 ok，不回显任何内容。 */
+export const visitorVisitBodySchema = z.object({
+  visitorId: uuidSchema,
+  isNewVisitor: z.boolean(),
+  site: attributionTextSchema(255),
+  attribution: visitAttributionSchema,
+}).strict();
+export type VisitorVisitBody = z.infer<typeof visitorVisitBodySchema>;
 
 /** 后台用户列表里的来源信息；历史用户为 null，前端显示「未知」。 */
 export const adminUserAcquisitionSchema = z.object({
@@ -102,10 +117,28 @@ export const adminUserAcquisitionSchema = z.object({
   firstTouchAt: isoDateTimeSchema.nullable(),
 }).strict();
 
-/** 仪表盘本月注册来源分布。 */
-export const adminAcquisitionMixItemSchema = z.object({
+/** 仪表盘流量来源：访客按「同一访客同一天同一来源算一次」去重，注册与收入按注册时归因的来源统计。 */
+export const adminTrafficSourceItemSchema = z.object({
   source: acquisitionSourceSchema,
+  visitors: nonnegativeIntegerSchema,
+  newVisitors: nonnegativeIntegerSchema,
   registrations: nonnegativeIntegerSchema,
   paidUsers: nonnegativeIntegerSchema,
   revenue: nonnegativeIntegerSchema,
+}).strict();
+
+export const adminTrafficRangeSchema = z.object({
+  visitors: nonnegativeIntegerSchema,
+  newVisitors: nonnegativeIntegerSchema,
+  registrations: nonnegativeIntegerSchema,
+  items: z.array(adminTrafficSourceItemSchema),
+}).strict();
+
+export const TRAFFIC_RANGES = ['today', 'sevenDays', 'month'] as const;
+export type TrafficRange = (typeof TRAFFIC_RANGES)[number];
+
+export const adminTrafficSourcesSchema = z.object({
+  today: adminTrafficRangeSchema,
+  sevenDays: adminTrafficRangeSchema,
+  month: adminTrafficRangeSchema,
 }).strict();

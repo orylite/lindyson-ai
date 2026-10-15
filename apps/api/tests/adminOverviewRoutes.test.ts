@@ -52,10 +52,18 @@ describe('后台总览聚合', () => {
         { model: 'Seedance 2.0', billableTokens: 108900 },
         { model: 'Doubao Seed 2.0 Lite', billableTokens: 8200 },
       ],
-      acquisition_mix: [
-        { source: 'xiaohongshu', registrations: 40, paidUsers: 6, revenue: 119400 },
-        { source: 'direct', registrations: 20, paidUsers: 1, revenue: 19900 },
+      traffic_rows: [
+        { range: 'today', source: 'xiaohongshu', visitors: 30, newVisitors: 25, registrations: 2, paidUsers: 0, revenue: 0 },
+        { range: 'month', source: 'xiaohongshu', visitors: 400, newVisitors: 300, registrations: 40, paidUsers: 6, revenue: 119400 },
+        { range: 'month', source: 'direct', visitors: 100, newVisitors: 80, registrations: 20, paidUsers: 1, revenue: 19900 },
+        { range: 'month', source: 'unknown-source', visitors: 1, newVisitors: 1, registrations: 0, paidUsers: 0, revenue: 0 },
+        { range: 'bogus', source: 'direct', visitors: 9, newVisitors: 9, registrations: 9, paidUsers: 0, revenue: 0 },
       ],
+      traffic_totals: {
+        today: { visitors: 30, newVisitors: 25 },
+        sevenDays: { visitors: 0, newVisitors: 0 },
+        month: { visitors: 480, newVisitors: 360 },
+      },
       day_start: '2026-07-10T16:00:00.000Z',
       month_start: '2026-06-30T16:00:00.000Z',
     }]));
@@ -81,10 +89,21 @@ describe('后台总览聚合', () => {
           { model: 'Seedance 2.0', billableTokens: 108900 },
           { model: 'Doubao Seed 2.0 Lite', billableTokens: 8200 },
         ],
-        acquisitionMix: [
-          { source: 'xiaohongshu', registrations: 40, paidUsers: 6, revenue: 119400 },
-          { source: 'direct', registrations: 20, paidUsers: 1, revenue: 19900 },
-        ],
+        trafficSources: {
+          today: {
+            visitors: 30, newVisitors: 25, registrations: 2,
+            items: [{ source: 'xiaohongshu', visitors: 30, newVisitors: 25, registrations: 2, paidUsers: 0, revenue: 0 }],
+          },
+          sevenDays: { visitors: 0, newVisitors: 0, registrations: 0, items: [] },
+          month: {
+            visitors: 480, newVisitors: 360, registrations: 60,
+            items: [
+              { source: 'xiaohongshu', visitors: 400, newVisitors: 300, registrations: 40, paidUsers: 6, revenue: 119400 },
+              { source: 'direct', visitors: 100, newVisitors: 80, registrations: 20, paidUsers: 1, revenue: 19900 },
+              { source: 'other', visitors: 1, newVisitors: 1, registrations: 0, paidUsers: 0, revenue: 0 },
+            ],
+          },
+        },
         timezone: 'Asia/Shanghai',
       }));
       expect(response.json().apiCostHealth).toEqual({

@@ -1,5 +1,5 @@
 import { referralCodeSchema, referralSettingsSchema, referralStatusSchema, referralPageSchema, referralSummarySchema } from './referrals.js';
-import { acquisitionSourceSchema, registrationAttributionSchema } from './acquisition.js';
+import { acquisitionSourceSchema, registrationAttributionSchema, visitorVisitBodySchema } from './acquisition.js';
 import { mcpEndpointContracts } from './mcp.js';
 import { z } from 'zod';
 import {
@@ -801,6 +801,8 @@ const referralListQuery = z.object({
   from: isoDateSchema.optional(), to: isoDateSchema.optional(),
 }).strict();
 const publicEndpointContracts = {
+  publicVisit: contract({ method: 'POST', path: '/api/public/visits', successStatus: 200,
+    body: visitorVisitBodySchema, response: z.object({ ok: z.literal(true) }) }),
   referralCheck: contract({ method: 'POST', path: '/api/public/referrals/check', successStatus: 200,
     body: z.object({ code: z.string().trim().min(1).max(128) }).strict(),
     response: z.object({ valid: z.boolean(), message: z.string() }) }),
