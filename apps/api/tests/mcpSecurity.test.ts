@@ -12,7 +12,10 @@ describe('MCP 授权与暂存密钥', () => {
     expect(unseal(encrypted, 'independent-key', 'user-a:file-a')).toBe(text);
     expect(() => unseal(encrypted, 'independent-key', 'user-b:file-a')).toThrow();
     expect(() => unseal(encrypted, 'wrong-key', 'user-a:file-a')).toThrow();
-    expect(() => unseal('X' + encrypted.slice(1), 'independent-key', 'user-a:file-a')).toThrow();
+    // 随机 nonce 的首字符本身可能就是 X，固定写 'X' 会偶发不篡改；改为翻转首字节确保密文一定被改动
+    const tampered = Buffer.from(encrypted, 'base64url');
+    tampered[0] = tampered[0]! ^ 0xff;
+    expect(() => unseal(tampered.toString('base64url'), 'independent-key', 'user-a:file-a')).toThrow();
   });
   it.each([
     'https://chatgpt.com/connector_platform_oauth_redirect',
