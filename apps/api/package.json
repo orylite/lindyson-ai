@@ -59,7 +59,7 @@
     "fastify-type-provider-zod": "4.0.1",
     "file-type": "22.1.1",
     "ipaddr.js": "2.4.0",
-    "nanoid": "^5.0.9",
+    "nanoid": "^6.0.2",
     "node-html-parser": "^9.0.0",
     "oidc-provider": "9.12.2",
     "pg": "^8.13.1",
