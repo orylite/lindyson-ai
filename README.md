@@ -194,7 +194,7 @@ docker compose --env-file .env.demo -f docker-compose.yml -f docker-compose.demo
 
 支付通道的密钥不写在 `.env` 里。登录管理后台，进入"支付通道"，填写服务商给你的商户号（`mchNo`）、应用 ID（`appId`）和 API 密钥（`apiKey`），保存时会用上面的 `PAYMENT_CONFIG_ENCRYPTION_KEY` 加密入库。
 
-项目通过 [Jeepay](https://www.jeequan.com/) 这类聚合支付网关对接微信支付和支付宝。选哪家服务商、怎么申请商户号，由你根据自己的主体和地区决定；只要网关提供上述三个字段并支持异步通知，就能接上。
+支付宝和微信支付都可以直接接。项目内置的是 [Jeepay](https://www.jeequan.com/) 通道：在 Jeepay 里配好你自己的支付宝、微信支付商户号，再把它的商户号、应用 ID 和 API 密钥填进后台，用户付款时就直接走支付宝或微信。商户号怎么申请、用哪个主体，由你根据自己的情况决定。想换别的支付服务商，支付层在 `apps/api/src/payments/` 下是独立的，照着 Jeepay 的实现加一个通道即可。
 
 ---
 
