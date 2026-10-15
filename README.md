@@ -12,17 +12,37 @@
 
 ## 预览
 
-| 工作台仪表盘 | AI Studio：视频生成 |
+### 官网
+
+| 发布预览 | 套餐定价 |
+|---|---|
+| ![发布预览](docs/screenshots/landing-publish-preview.webp) | ![套餐定价](docs/screenshots/landing-pricing.webp) |
+| **FAQ** | |
+| ![FAQ](docs/screenshots/landing-faq.webp) | |
+
+### 用户端
+
+| 仪表盘 | AI Studio：视频生成 |
 |---|---|
 | ![仪表盘](docs/screenshots/dashboard.webp) | ![AI Studio](docs/screenshots/ai-studio.webp) |
 | **数字资产** | **TikTok 账号管理** |
 | ![数字资产](docs/screenshots/digital-assets.webp) | ![TikTok 账号](docs/screenshots/tiktok-accounts.webp) |
 | **发布至 TikTok** | **账户中心：积分与 MCP 连接** |
 | ![发布至 TikTok](docs/screenshots/tiktok-publish.webp) | ![账户中心](docs/screenshots/account-center.webp) |
-| **管理后台** | **官网：发布预览** |
-| ![管理后台](docs/screenshots/admin-dashboard.webp) | ![发布预览](docs/screenshots/landing-publish-preview.webp) |
-| **官网：套餐定价** | **官网：FAQ** |
-| ![套餐定价](docs/screenshots/landing-pricing.webp) | ![FAQ](docs/screenshots/landing-faq.webp) |
+
+### 提示词引擎（核心功能）
+
+TK Prompt Engine 从一张商品图出发：先识别并由你确认商品事实，再设定目标市场、口播语言与画面方式，最后生成"最稳、最原生、最抓眼"三套可直接执行的分镜提示词，采用后写回 AI Studio。
+
+| 第 1 步：确认商品事实 | 第 2 步：设置市场与创作条件 |
+|---|---|
+| ![确认商品事实](docs/screenshots/prompt-engine-1-facts.webp) | ![设置市场与创作条件](docs/screenshots/prompt-engine-2-market.webp) |
+| **第 3 步：三个提示词方案** | |
+| ![三个提示词方案](docs/screenshots/prompt-engine-3-plans.webp) | |
+
+### 管理后台
+
+![管理后台](docs/screenshots/admin-dashboard.webp)
 
 ## 功能
 

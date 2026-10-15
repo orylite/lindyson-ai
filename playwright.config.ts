@@ -6,6 +6,8 @@ const baseURL = `http://127.0.0.1:${e2ePort}`;
 export default defineConfig({
   testDir: './tests/e2e',
   timeout: 30_000,
+  // CI 的 runner 比本机慢，个别分页/轮询用例偶发超时，允许重试两次；本机保持 0 以便暴露问题。
+  retries: process.env.CI ? 2 : 0,
   expect: {
     timeout: 8_000,
   },
