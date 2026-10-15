@@ -30,7 +30,8 @@
   <a href="#-常见问题备份与升级">常见问题</a> ·
   <a href="#-二次开发">二次开发</a> ·
   <a href="CONTRIBUTING.md">贡献</a> ·
-  <a href="SECURITY.md">安全</a>
+  <a href="SECURITY.md">安全</a> ·
+  <a href="#-联系与交流">联系我们</a>
 </p>
 
 > **English**: Lindyson AI Video Generator is an AI video and image generation workspace for e-commerce and short-video teams, built on Volcengine Ark (Seedance / Seedream). It ships a React front end, a Fastify API with a BullMQ worker, PostgreSQL, Redis, credit-based billing, an admin console, and an MCP server with OAuth 2.1. The UI and docs are in Simplified Chinese. A no-key demo stack is one `docker compose` command away, see [五分钟试玩](#-五分钟试玩).
@@ -61,6 +62,8 @@
 > - 把提示词引擎单独拆出来，集成到你已有的选品或运营工具里。
 >
 > 唯一的要求是不要用 "Lindyson" 这个名字和标识，详见 [TRADEMARK.md](TRADEMARK.md)。做出了有意思的东西，欢迎回来开个 issue 告诉我们。
+>
+> 另外，如果你也是跨境卖家或者做 TK 的同行，不管用不用这个项目，都欢迎来聊聊：怎么选品、怎么用 AI 出爆款、哪些市场好做，这些我们天天在碰。联系方式在文末的 [联系与交流](#-联系与交流)。
 
 ---
 
