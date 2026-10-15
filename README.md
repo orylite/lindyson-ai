@@ -12,7 +12,10 @@
 </p>
 
 <p align="center">
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/github/package-json/v/orylite/lindyson-ai?label=version&color=0F766E" alt="Version"></a>
   <a href="https://github.com/orylite/lindyson-ai/actions/workflows/ci.yml"><img src="https://github.com/orylite/lindyson-ai/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/orylite/lindyson-ai/security/code-scanning"><img src="https://github.com/orylite/lindyson-ai/actions/workflows/github-code-scanning/codeql/badge.svg" alt="CodeQL"></a>
+  <a href="MCP_CHATGPT.md"><img src="https://img.shields.io/badge/MCP-ChatGPT%20%2F%20Codex%20ready-111827?logo=openai&logoColor=white" alt="MCP: ChatGPT / Codex ready"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License: Apache-2.0"></a>
   <img src="https://img.shields.io/badge/node-%3E%3D22-339933?logo=node.js&logoColor=white" alt="Node 22">
   <img src="https://img.shields.io/badge/docker-compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
