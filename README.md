@@ -101,7 +101,7 @@ npm run dev
 一台 2 核 4G 的机器就够跑：PostgreSQL、Redis、API、worker、前端 nginx 全在一个 `docker compose` 里。
 
 ```bash
-git clone <本仓库地址> lindyson && cd lindyson
+git clone https://github.com/orylite/lindyson-ai.git && cd lindyson-ai
 ```
 
 ```bash
