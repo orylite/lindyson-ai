@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/readme-assets/banner.webp" alt="Lindyson AI：一张商品图，生成三条短视频" width="100%">
+  <img src="docs/readme-assets/hero.webp" alt="让商品创意直接动起来：AI 视频、图片生成与 TikTok 发布，在一个工作台完成" width="100%">
 </p>
 
 <h1 align="center">Lindyson AI Video Generator</h1>
@@ -36,10 +36,6 @@
 
 ## 💡 为什么开源这个项目
 
-<p align="center">
-  <img src="docs/readme-assets/why-lindyson.webp" alt="从一张商品图到三条短视频" width="85%">
-</p>
-
 <!-- 下面是作者的话，欢迎按自己的语气改写。 -->
 
 > **说白了，这个项目是被逼出来的：做电商短视频又贵又慢。**
@@ -70,8 +66,6 @@
 | 发布预览 | 套餐定价 |
 |---|---|
 | ![发布预览](docs/screenshots/landing-publish-preview.webp) | ![套餐定价](docs/screenshots/landing-pricing.webp) |
-| **首页** | **FAQ** |
-| ![首页](docs/screenshots/landing-hero.webp) | ![FAQ](docs/screenshots/landing-faq.webp) |
 
 ### 用户端
 
@@ -87,11 +81,9 @@
 
 TK Prompt Engine 从一张商品图出发：先识别并由你确认商品事实，再设定目标市场、口播语言与画面方式，最后生成"最稳、最原生、最抓眼"三套可直接执行的分镜提示词，采用后写回 AI Studio。
 
-| 第 1 步：确认商品事实 | 第 2 步：设置市场与创作条件 |
-|---|---|
-| ![确认商品事实](docs/screenshots/prompt-engine-1-facts.webp) | ![设置市场与创作条件](docs/screenshots/prompt-engine-2-market.webp) |
-| **第 3 步：三个提示词方案** | |
-| ![三个提示词方案](docs/screenshots/prompt-engine-3-plans.webp) | |
+| 第 1 步：确认商品事实 | 第 2 步：设置市场与创作条件 | 第 3 步：三个提示词方案 |
+|---|---|---|
+| ![确认商品事实](docs/screenshots/prompt-engine-1-facts.webp) | ![设置市场与创作条件](docs/screenshots/prompt-engine-2-market.webp) | ![三个提示词方案](docs/screenshots/prompt-engine-3-plans.webp) |
 
 ### 管理后台
 
@@ -435,6 +427,6 @@ flowchart LR
 
 ## 📜 第三方资源与许可
 
-随仓库分发的第三方资源清单见 [NOTICE](NOTICE)，细节见 [ATTRIBUTIONS.md](ATTRIBUTIONS.md) 和 `public/fonts/说明.md`。首页商品图与视频均为 AI 生成，来源记录在 `src/imports/landing-masters/PROVENANCE.md`；本 README 顶部横幅与概念插图同样为 AI 生成，来源记录在 `docs/readme-assets/PROVENANCE.md`。母版文件不在仓库里。
+随仓库分发的第三方资源清单见 [NOTICE](NOTICE)，细节见 [ATTRIBUTIONS.md](ATTRIBUTIONS.md) 和 `public/fonts/说明.md`。首页商品图与视频均为 AI 生成，来源记录在 `src/imports/landing-masters/PROVENANCE.md`，README 顶部横幅是首页截图。母版文件不在仓库里。
 
 本项目以 [Apache-2.0](LICENSE) 许可证开源。"Lindyson" 名称与标识不随代码授权，基于本项目发布的服务请使用自己的品牌，详见 [TRADEMARK.md](TRADEMARK.md)。
