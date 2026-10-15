@@ -215,6 +215,7 @@ export function useAppController() {
     updateAccount: accountDomain.updateAccount,
     changeAccountPassword: accountDomain.changeAccountPassword,
     logoutAccount: session.logoutAccount,
+    logoutAllDevices: session.logoutAllDevices,
     plans: session.plans,
     setPlans: session.setPlans,
     announcements: session.announcements,

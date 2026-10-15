@@ -842,6 +842,7 @@ const publicEndpointContracts = {
     }).strict(), response: okResponseSchema,
   }),
   authLogout: contract({ method: 'POST', path: '/api/auth/logout', successStatus: 200, response: okResponseSchema }),
+  authLogoutAll: contract({ method: 'POST', path: '/api/auth/logout-all', successStatus: 200, response: okResponseSchema }),
   authMe: contract({ method: 'GET', path: '/api/auth/me', successStatus: 200, response: userResponse }),
 
   accountFeatureFlags: contract({

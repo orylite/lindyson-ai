@@ -27,9 +27,9 @@ export function validateRegisterUserName(userName: string) {
 }
 
 export function validateRegisterPassword(password: string) {
-  if (password.length < 8 || password.length > 32) return '密码需为 8-32 位，并包含字母和数字';
-  if (PASSWORD_SPACE_PATTERN.test(password)) return '密码需为 8-32 位，并包含字母和数字';
-  if (!PASSWORD_LETTER_PATTERN.test(password) || !PASSWORD_DIGIT_PATTERN.test(password)) return '密码需为 8-32 位，并包含字母和数字';
+  if (password.length < 8 || password.length > 128) return '密码需为 8-128 位，并包含字母和数字';
+  if (PASSWORD_SPACE_PATTERN.test(password)) return '密码需为 8-128 位，并包含字母和数字';
+  if (!PASSWORD_LETTER_PATTERN.test(password) || !PASSWORD_DIGIT_PATTERN.test(password)) return '密码需为 8-128 位，并包含字母和数字';
 
   return null;
 }

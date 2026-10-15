@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createHmac } from 'node:crypto';
-import { env } from '../src/config/env.js';
+import { deriveSigningKey } from '../src/config/env.js';
 import type { DbClient } from '../src/db/pool.js';
 import {
   adminExactPageTotalCountSql,
@@ -23,7 +23,7 @@ function legacyCursor(prefix: string, payload: Record<string, unknown>, signatur
   const encodedPayload = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
   return Buffer.from(JSON.stringify({
     payload: encodedPayload,
-    signature: signatureOverride ?? createHmac('sha256', env.JWT_SECRET)
+    signature: signatureOverride ?? createHmac('sha256', deriveSigningKey('admin-keyset-pagination'))
       .update(`${prefix}:${encodedPayload}`).digest('hex'),
   }), 'utf8').toString('base64url');
 }

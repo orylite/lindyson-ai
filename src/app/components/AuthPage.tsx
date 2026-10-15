@@ -345,7 +345,7 @@ export function AuthPage({ mode, onLoginSuccess, onRegisterCodeRequest, onRegist
               placeholder="请输入密码"
               icon={<Lock className="h-4 w-4" />}
               autoComplete={isRegister ? 'new-password' : 'current-password'}
-              hint={isRegister ? '8-32 位，需包含字母和数字，不允许空格' : undefined}
+              hint={isRegister ? '8-128 位，需包含字母和数字，不允许空格' : undefined}
             />
             {isRegister && (
               <Input

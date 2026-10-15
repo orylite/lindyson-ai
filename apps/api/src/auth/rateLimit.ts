@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 import type { FastifyRequest } from 'fastify';
-import { env } from '../config/env.js';
+import { deriveSigningKey } from '../config/env.js';
 import { withTransaction, type DbClient } from '../db/pool.js';
 
 interface RateLimitPolicy {
@@ -89,7 +89,7 @@ export async function consumeRateLimit(client: DbClient, policy: RateLimitPolicy
 }
 
 function hashRateLimitKey(scope: string, identity: string) {
-  return createHmac('sha256', env.JWT_SECRET)
+  return createHmac('sha256', deriveSigningKey('auth-rate-limit'))
     .update(`${scope}:${identity}`)
     .digest('hex');
 }

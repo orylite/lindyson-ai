@@ -1,5 +1,5 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
-import { env } from '../config/env.js';
+import { deriveSigningKey } from '../config/env.js';
 import type { DbClient } from '../db/pool.js';
 import { canonicalTailSize, normalizeCursorTimestamp } from './cursorPagination.js';
 
@@ -428,13 +428,13 @@ function validateLegacyCursorForUpgrade(
 }
 
 function sign(payload: string) {
-  return createHmac('sha256', env.JWT_SECRET)
+  return createHmac('sha256', deriveSigningKey('admin-keyset-pagination'))
     .update(`admin-exact-keyset-v4:${payload}`)
     .digest('hex');
 }
 
 function signWithPrefix(prefix: string, payload: string) {
-  return createHmac('sha256', env.JWT_SECRET).update(`${prefix}:${payload}`).digest('hex');
+  return createHmac('sha256', deriveSigningKey('admin-keyset-pagination')).update(`${prefix}:${payload}`).digest('hex');
 }
 
 function stableStringify(value: unknown): string {

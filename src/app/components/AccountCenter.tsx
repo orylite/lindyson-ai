@@ -56,6 +56,7 @@ interface AccountCenterProps {
   onAccountChange: (patch: Partial<AccountProfile>) => Promise<void>;
   onPasswordChange: (payload: { currentPassword: string; newPassword: string }) => Promise<void>;
   onLogout: () => void;
+  onLogoutAllDevices: () => Promise<void>;
   onNavigate: (tab: string) => void;
   onAdminOpen: () => void;
 }
@@ -111,7 +112,7 @@ const TRANSACTION_TYPE_META: Record<CreditType, { label: string; badge: 'success
 const TRANSACTION_GRID_CLASS = 'grid grid-cols-[150px_90px_110px_110px_190px_minmax(220px,1fr)] gap-4';
 const TRANSACTION_CELL_CLASS = 'min-h-7 flex items-center';
 
-export function AccountCenter({ account, transactions, transactionFilter, transactionPagination, transactionLoading, onTransactionFilterChange, onTransactionPageNavigate, activeSection, onSectionChange, onOrderHistoryLoad, onGenerationJobDetailLoad, onAccountChange, onPasswordChange, onLogout, onNavigate, onAdminOpen }: AccountCenterProps) {
+export function AccountCenter({ account, transactions, transactionFilter, transactionPagination, transactionLoading, onTransactionFilterChange, onTransactionPageNavigate, activeSection, onSectionChange, onOrderHistoryLoad, onGenerationJobDetailLoad, onAccountChange, onPasswordChange, onLogout, onLogoutAllDevices, onNavigate, onAdminOpen }: AccountCenterProps) {
   const [nameDraft, setNameDraft] = useState(account.userName);
   const [profileNameDraft, setProfileNameDraft] = useState(account.userName);
   const [oldPassword, setOldPassword] = useState('');
@@ -273,6 +274,16 @@ export function AccountCenter({ account, transactions, transactionFilter, transa
     }
   };
 
+  const [loggingOutAll, setLoggingOutAll] = useState(false);
+  const handleLogoutAllDevices = async () => {
+    setLoggingOutAll(true);
+    try {
+      await onLogoutAllDevices();
+    } finally {
+      setLoggingOutAll(false);
+      setIsLogoutModalOpen(false);
+    }
+  };
   const handleLogout = () => {
     setIsLogoutModalOpen(false);
     onLogout();
@@ -710,13 +721,16 @@ export function AccountCenter({ account, transactions, transactionFilter, transa
                   </div>
                   <div>
                     <h2 id="logout-dialog-title" className="text-lg font-bold text-white">退出账号</h2>
-                    <p className="text-sm text-gray-400 mt-2">确认退出当前账号吗？</p>
+                    <p className="text-sm text-gray-400 mt-2">确认退出当前账号吗？选择“退出所有设备”会让其他浏览器和 MCP 客户端的登录一并失效。</p>
                   </div>
                 </div>
 
                 <div className="mt-6 flex items-center justify-end gap-3">
                   <Button data-dialog-initial-focus variant="secondary" onClick={() => setIsLogoutModalOpen(false)}>
                     取消
+                  </Button>
+                  <Button variant="secondary" loading={loggingOutAll} onClick={() => void handleLogoutAllDevices()}>
+                    退出所有设备
                   </Button>
                   <Button variant="danger" onClick={handleLogout}>
                     确认退出

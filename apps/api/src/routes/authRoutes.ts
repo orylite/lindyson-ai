@@ -384,6 +384,14 @@ export async function registerAuthRoutes(app: FastifyInstance) {
     return { ok: true };
   });
 
+  // 退出所有设备：递增 auth_version 让所有已签发的会话与 MCP 连接失效，再清掉当前 Cookie。
+  app.post('/api/auth/logout-all', async (request, reply) => {
+    const user = await requireAuth(request);
+    await pool.query('UPDATE users SET auth_version = auth_version + 1, updated_at = now() WHERE id = $1', [user.id]);
+    clearAuthSession(reply);
+    return { ok: true };
+  });
+
   app.get('/api/auth/me', async request => {
     const user = await requireAuth(request);
     await reconcileSubscription(user.id);

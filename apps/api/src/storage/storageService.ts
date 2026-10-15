@@ -16,7 +16,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { MAX_UPLOAD_SIZE_BYTES } from '@lindyson/api-contracts';
-import { env } from '../config/env.js';
+import { deriveSigningKey, env } from '../config/env.js';
 
 export interface UploadSignatureInput {
   objectKey: string;
@@ -889,7 +889,7 @@ function signLocalStorageRequest(input: {
     String(input.maxSizeBytes),
     String(input.expiresAtSeconds),
   ].join('\n');
-  return createHmac('sha256', env.JWT_SECRET).update(payload).digest('base64url');
+  return createHmac('sha256', deriveSigningKey('local-storage-url')).update(payload).digest('base64url');
 }
 
 function requiredEnv(value: string | undefined, name: string) {

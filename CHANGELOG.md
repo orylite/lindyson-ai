@@ -14,6 +14,12 @@
 
 ### 安全
 
+- 动态客户端注册 `/oauth/reg` 按来源 IP 限流（每分钟 10 次）；未产生授权的注册记录 24 小时后自动清理。
+- 限流键哈希、本地存储 URL 签名、分页游标签名改用从 `JWT_SECRET` 以 HKDF 派生的用途隔离密钥；**升级后旧的分页游标和本地存储签名链接会失效**（都是短期令牌），会话不受影响。
+- 新增"退出所有设备"（`POST /api/auth/logout-all`），递增 `auth_version` 使所有会话失效。
+- 密码长度上限从 32 位放宽到 128 位。
+- 生产构建缺少 `publicCompliance.local.json` 时打印警告。
+
 - `TRUST_PROXY` 支持跳数和 IP/CIDR 列表，生产环境应只信任反向代理地址；**注意**：此前 `TRUST_PROXY=1` 等价于 `true`，现在表示信任最近 1 跳。
 - `docker-compose.yml` 改为单机生产栈（含前端 nginx 反代，API 默认 `TRUST_PROXY=1`，API 端口只绑定 `127.0.0.1`）；全栈测试的 mock 与第二站点入口拆到 `docker-compose.fullstack.yml`。
 - API 镜像改为以非 root 用户 `node` 运行。

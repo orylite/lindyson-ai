@@ -3,6 +3,8 @@ import { pool } from '../db/pool.js';
 import { env } from '../config/env.js';
 import { hashSecret, seal, unseal } from './security.js';
 
+const UNUSED_CLIENT_TTL_SECONDS = 24 * 60 * 60;
+
 /** 原始令牌不作为数据库键；OAuth payload 加密，授权码消费通过 CAS 防止并发重放。 */
 export class PostgresOAuthAdapter implements Adapter {
   constructor(private readonly kind: string) {}
@@ -11,6 +13,8 @@ export class PostgresOAuthAdapter implements Adapter {
   }
   async upsert(id: string, payload: AdapterPayload, expiresIn?: number) {
     const key = this.key(id);
+    // 动态注册的 Client 默认只保留 24 小时；一旦有授权（Grant）落地就改为长期保留，避免未使用的注册记录无限堆积。
+    if (this.kind === 'Client' && expiresIn === undefined) expiresIn = UNUSED_CLIENT_TTL_SECONDS;
     await pool.query(
       `INSERT INTO mcp_oauth_states (kind,id_hash,payload_encrypted,grant_id,uid_hash,user_code_hash,expires_at)
        VALUES ($1,$2,$3,$4,$5,$6,CASE WHEN $7::integer IS NULL THEN NULL ELSE now() + make_interval(secs => $7) END)
@@ -26,6 +30,12 @@ export class PostgresOAuthAdapter implements Adapter {
         expiresIn ?? null,
       ],
     );
+    if (this.kind === 'Grant' && typeof payload.clientId === 'string') {
+      await pool.query(
+        "UPDATE mcp_oauth_states SET expires_at=NULL WHERE kind='Client' AND id_hash=$1 AND expires_at IS NOT NULL",
+        [hashSecret(`Client:${payload.clientId}`)],
+      );
+    }
   }
   private async read(column: 'id_hash' | 'uid_hash' | 'user_code_hash', value: string) {
     const result = await pool.query<{

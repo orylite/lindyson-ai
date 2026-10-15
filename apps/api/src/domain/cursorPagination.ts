@@ -1,6 +1,6 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
-import { env } from '../config/env.js';
+import { deriveSigningKey } from '../config/env.js';
 import type { DbClient } from '../db/pool.js';
 
 const fourWayCursorPayloadSchema = z.object({
@@ -717,13 +717,13 @@ function decodeFourWayCursor(
 }
 
 function signFourWayCursor(payload: string) {
-  return createHmac('sha256', env.JWT_SECRET)
+  return createHmac('sha256', deriveSigningKey('cursor-pagination'))
     .update(`cursor-pagination-v2:${payload}`)
     .digest('hex');
 }
 
 function signExactCursor(payload: string) {
-  return createHmac('sha256', env.JWT_SECRET)
+  return createHmac('sha256', deriveSigningKey('cursor-pagination'))
     .update(`cursor-pagination-v3:${payload}`)
     .digest('hex');
 }

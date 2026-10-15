@@ -72,6 +72,11 @@ export async function registerMcpRoutes(app: FastifyInstance) {
   });
   if (!env.MCP_ENABLED) return;
   const provider = createMcpOAuthProvider();
+  // 动态客户端注册不需要认证，按来源 IP 限流，避免被批量注册撑大 mcp_oauth_states。
+  app.addHook('onRequest', async (request) => {
+    if (request.method === 'POST' && request.url.split('?')[0] === '/oauth/reg')
+      await enforceMcpRateLimit(`oauth-reg:${request.ip}`, 10);
+  });
   await app.register(middie);
   app.use('/oauth', provider.callback());
   // 为封装插件建立路由归属，确保 middie 也处理 OAuth 路径而非进入根级 404。

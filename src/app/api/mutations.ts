@@ -74,6 +74,10 @@ export async function logout() {
   return apiRequest('/api/auth/logout', endpointContracts.authLogout.response, { method: 'POST', sessionScoped: false });
 }
 
+export async function logoutAllDevices() {
+  return apiRequest('/api/auth/logout-all', endpointContracts.authLogoutAll.response, { method: 'POST', sessionScoped: false });
+}
+
 export async function requestPasswordReset(email: string) {
   return apiRequest('/api/auth/forgot-password', endpointContracts.authForgotPassword.response, {
     method: 'POST',
