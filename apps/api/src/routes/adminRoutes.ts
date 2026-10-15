@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { endpointContracts } from '@lindyson/api-contracts';
+import { endpointContracts, normalizeAcquisitionSource } from '@lindyson/api-contracts';
 import type { z } from 'zod';
 import { requireAdmin } from '../auth/session.js';
 import {
@@ -173,6 +173,15 @@ interface AdminUserRow {
   active_subscription_order_id: string | null;
   registered_at: Date | string;
   last_active_at: DateTimeValue;
+  acquisition_source?: string | null;
+  acquisition_raw_source?: string | null;
+  acquisition_medium?: string | null;
+  acquisition_campaign?: string | null;
+  acquisition_content?: string | null;
+  acquisition_term?: string | null;
+  acquisition_referrer_host?: string | null;
+  acquisition_landing_path?: string | null;
+  acquisition_first_touch_at?: DateTimeValue;
 }
 
 interface AssignablePlanRow {
@@ -481,6 +490,33 @@ export async function registerAdminRoutes(app: FastifyInstance) {
             ),
             '[]'::jsonb
           ) FROM model_usage) AS model_usage,
+         (SELECT coalesce(
+            jsonb_agg(
+              jsonb_build_object(
+                'source', source,
+                'registrations', registrations,
+                'paidUsers', paid_users,
+                'revenue', revenue
+              ) ORDER BY registrations DESC, revenue DESC, source ASC
+            ),
+            '[]'::jsonb
+          ) FROM (
+            SELECT ua.source,
+                   count(*)::int AS registrations,
+                   count(*) FILTER (WHERE paid.user_id IS NOT NULL)::int AS paid_users,
+                   coalesce(sum(paid.revenue), 0)::bigint AS revenue
+            FROM user_acquisitions ua
+            JOIN users u ON u.id = ua.user_id
+            CROSS JOIN boundaries
+            LEFT JOIN (
+              SELECT user_id, sum(amount) AS revenue
+              FROM orders
+              WHERE status = 'paid'
+              GROUP BY user_id
+            ) paid ON paid.user_id = u.id
+            WHERE u.registered_at >= month_start
+            GROUP BY ua.source
+          ) acquisition_mix) AS acquisition_mix,
          (SELECT day_start FROM boundaries) AS day_start,
          (SELECT month_start FROM boundaries) AS month_start,
          (SELECT sync_status FROM cost_sync_health) AS cost_sync_status,
@@ -516,6 +552,7 @@ export async function registerAdminRoutes(app: FastifyInstance) {
           : 100,
         revenueTrend: mapAdminRevenueTrend(row.revenue_trend),
         modelUsage: mapAdminModelUsage(row.model_usage),
+        acquisitionMix: mapAdminAcquisitionMix(row.acquisition_mix),
         timezone: 'Asia/Shanghai',
         dayStart: toIsoDateTime(row.day_start),
         monthStart: toIsoDateTime(row.month_start),
@@ -785,7 +822,7 @@ export async function registerAdminRoutes(app: FastifyInstance) {
   app.get('/api/admin/users', async request => {
     const admin = await requireAdmin(request);
     const rawQuery = endpointContracts.adminUsers.query.parse(request.query);
-    const filters = { search: rawQuery.search ?? '', status: rawQuery.status ?? null };
+    const filters = { search: rawQuery.search ?? '', status: rawQuery.status ?? null, source: rawQuery.source ?? null };
     const resource = 'admin-users';
     const pageRequest = parseAdminPageRequest({
       ...rawQuery,
@@ -802,13 +839,15 @@ export async function registerAdminRoutes(app: FastifyInstance) {
             `SELECT count(*)::text AS count
              FROM users u
              LEFT JOIN plans search_plan ON search_plan.id = u.plan_id
+             LEFT JOIN user_acquisitions ua ON ua.user_id = u.id
              WHERE ($1::text IS NULL OR u.status = $1)
                AND ($2::text IS NULL OR (
                  u.user_name ILIKE '%' || $2 || '%'
                  OR u.email::text ILIKE '%' || $2 || '%'
                  OR search_plan.name ILIKE '%' || $2 || '%'
-               ))`,
-            [rawQuery.status ?? null, rawQuery.search || null],
+               ))
+               AND ($3::text IS NULL OR ua.source = $3)`,
+            [rawQuery.status ?? null, rawQuery.search || null, rawQuery.source ?? null],
           )).rows[0]?.count;
       const query = materializeAdminPageQuery(pageRequest, {
         resourceVersion: version.version,
@@ -821,6 +860,7 @@ export async function registerAdminRoutes(app: FastifyInstance) {
                 ${adminPageMetadataColumns('u.registered_at')}
          FROM users u
          LEFT JOIN plans search_plan ON search_plan.id = u.plan_id
+         LEFT JOIN user_acquisitions search_ua ON search_ua.user_id = u.id
          WHERE ${adminCursorCondition(query, 'u.registered_at', 'u.id')}
            AND ($3::text IS NULL OR u.status = $3)
            AND ($4::text IS NULL OR (
@@ -828,10 +868,16 @@ export async function registerAdminRoutes(app: FastifyInstance) {
              OR u.email::text ILIKE '%' || $4 || '%'
              OR search_plan.name ILIKE '%' || $4 || '%'
            ))
+           AND ($5::text IS NULL OR search_ua.source = $5)
          ORDER BY ${adminPageOrderBy(query, 'u.registered_at', 'u.id')}
-         LIMIT $5
+         LIMIT $6
        )
        SELECT u.*, p.code AS plan_code, p.name AS plan_name,
+              ua.source AS acquisition_source, ua.raw_source AS acquisition_raw_source,
+              ua.medium AS acquisition_medium, ua.campaign AS acquisition_campaign,
+              ua.content AS acquisition_content, ua.term AS acquisition_term,
+              ua.referrer_host AS acquisition_referrer_host, ua.landing_path AS acquisition_landing_path,
+              ua.first_touch_at AS acquisition_first_touch_at,
               (SELECT count(*)::int FROM orders o WHERE o.user_id = u.id) AS order_count,
               (SELECT count(*)::int FROM tickets t WHERE t.user_id = u.id) AS ticket_count,
               (
@@ -842,8 +888,9 @@ export async function registerAdminRoutes(app: FastifyInstance) {
               ) AS api_calls
        FROM paged_users u
        LEFT JOIN plans p ON p.id = u.plan_id
+       LEFT JOIN user_acquisitions ua ON ua.user_id = u.id
        ORDER BY ${adminPageOrderBy(query, 'u.registered_at', 'u.id')}`,
-      [...adminCursorValues(query), rawQuery.status ?? null, rawQuery.search || null, query.limit + 1],
+      [...adminCursorValues(query), rawQuery.status ?? null, rawQuery.search || null, rawQuery.source ?? null, query.limit + 1],
     );
       return createAdminPage({
         rows: result.rows,
@@ -2325,6 +2372,19 @@ function mapAdminModelUsage(value: unknown) {
   });
 }
 
+function mapAdminAcquisitionMix(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap(item => {
+    if (!isRecord(item) || typeof item.source !== 'string') return [];
+    return [{
+      source: normalizeAcquisitionSource(item.source) ?? 'other' as const,
+      registrations: toInt(item.registrations),
+      paidUsers: toInt(item.paidUsers),
+      revenue: toInt(item.revenue),
+    }];
+  });
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -2430,6 +2490,11 @@ async function assertPinnedAnnouncementLimit(client: DbClient) {
 async function getAdminUserDto(client: DbClient, userId: string) {
   const result = await client.query<AdminUserRow>(
     `SELECT u.*, p.code AS plan_code, p.name AS plan_name,
+            ua.source AS acquisition_source, ua.raw_source AS acquisition_raw_source,
+            ua.medium AS acquisition_medium, ua.campaign AS acquisition_campaign,
+            ua.content AS acquisition_content, ua.term AS acquisition_term,
+            ua.referrer_host AS acquisition_referrer_host, ua.landing_path AS acquisition_landing_path,
+            ua.first_touch_at AS acquisition_first_touch_at,
             (SELECT count(*)::int FROM orders o WHERE o.user_id = u.id) AS order_count,
             (SELECT count(*)::int FROM tickets t WHERE t.user_id = u.id) AS ticket_count,
             (
@@ -2440,6 +2505,7 @@ async function getAdminUserDto(client: DbClient, userId: string) {
             ) AS api_calls
      FROM users u
      LEFT JOIN plans p ON p.id = u.plan_id
+     LEFT JOIN user_acquisitions ua ON ua.user_id = u.id
      WHERE u.id = $1
      LIMIT 1`,
     [userId],
@@ -2735,6 +2801,22 @@ function mapAdminUser(row: AdminUserRow) {
     activeSubscriptionOrderId: row.active_subscription_order_id,
     registeredAt: toIsoDateTime(row.registered_at),
     lastActiveAt: toIsoDateTime(row.last_active_at),
+    acquisition: mapAdminUserAcquisition(row),
+  };
+}
+
+function mapAdminUserAcquisition(row: AdminUserRow) {
+  if (!row.acquisition_source) return null;
+  return {
+    source: normalizeAcquisitionSource(row.acquisition_source) ?? 'other',
+    rawSource: row.acquisition_raw_source ?? null,
+    medium: row.acquisition_medium ?? null,
+    campaign: row.acquisition_campaign ?? null,
+    content: row.acquisition_content ?? null,
+    term: row.acquisition_term ?? null,
+    referrerHost: row.acquisition_referrer_host ?? null,
+    landingPath: row.acquisition_landing_path ?? null,
+    firstTouchAt: toIsoDateTime(row.acquisition_first_touch_at),
   };
 }
 

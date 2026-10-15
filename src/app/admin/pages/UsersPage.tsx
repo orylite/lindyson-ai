@@ -1,3 +1,4 @@
+import { ACQUISITION_SOURCES,ACQUISITION_SOURCE_LABELS,type AcquisitionSource } from '@lindyson/api-contracts';
 import { useEffect,useState } from 'react';
 import { toast } from 'sonner';
 import type { AdminUser,AdminUserSubscriptionUpdate } from '../../data/admin';
@@ -10,6 +11,7 @@ import {
   SelectFilter,
   Stack,
   UserDetail,
+  acquisitionBadge,
   number,
   statusBadge,
 } from '../components/AdminPageShared';
@@ -41,14 +43,16 @@ export function AdminUsersPage({
 }: AdminUsersPageProps) {
   const [search, setSearch] = useState(control.filters.search ?? '');
   const [status, setStatus] = useState<'all' | AdminUser['status']>(control.filters.status ?? 'all');
+  const [source, setSource] = useState<'all' | AcquisitionSource>(control.filters.source ?? 'all');
 
   useEffect(() => {
     const timer = window.setTimeout(() => control.setFilters({
       search: search.trim() || undefined,
       status: status === 'all' ? undefined : status,
+      source: source === 'all' ? undefined : source,
     }), 300);
     return () => window.clearTimeout(timer);
-  }, [control.setFilters, search, status]);
+  }, [control.setFilters, search, status, source]);
 
   const toggleFreeze = (user: AdminUser) => {
     const nextStatus = user.status === 'frozen' ? 'active' : 'frozen';
@@ -77,13 +81,18 @@ export function AdminUsersPage({
           { value: 'trial', label: '试用中' },
           { value: 'frozen', label: '已冻结' },
         ]} />
+        <SelectFilter value={source} onChange={setSource} label="来源" options={[
+          { value: 'all' as const, label: '全部来源' },
+          ...ACQUISITION_SOURCES.map(value => ({ value, label: ACQUISITION_SOURCE_LABELS[value] })),
+        ]} />
       </SearchFilter>
       <AdminDataTable
         items={users}
         paginationLabel="用户分页导航"
-        gridTemplate="1.2fr 1fr .75fr .9fr .75fr .95fr 190px"
+        gridTemplate="1.2fr .9fr .9fr .75fr .9fr .75fr .95fr 190px"
         columns={[
           { header: '用户', render: user => <Stack title={user.userName} subtitle={user.email} /> },
+          { header: '来源', render: user => <Stack title={acquisitionBadge(user.acquisition)} subtitle={user.acquisition?.campaign ?? undefined} /> },
           { header: '套餐', render: user => user.planName },
           { header: '积分', render: user => `${number(user.credits)} / ${number(user.totalCredits)}` },
           { header: '套餐重置时间', render: user => user.planResetAt ?? '-' },

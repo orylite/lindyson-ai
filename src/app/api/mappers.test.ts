@@ -291,6 +291,7 @@ describe('共享 DTO 展示映射', () => {
       activeSubscriptionOrderId: null,
       registeredAt: '2026-07-01T00:00:00.000Z',
       lastActiveAt: '2026-07-08T10:00:00.000Z',
+      acquisition: null,
     });
 
     expect(mapUser(user)).toMatchObject({

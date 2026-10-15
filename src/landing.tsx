@@ -3,6 +3,7 @@ import { useEffect,useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { LandingPage } from './app/components/LandingPage';
 import type { AdminPlan } from './app/data/admin';
+import { captureAttribution } from './app/state/attribution';
 import './styles/landing.css';
 
 /**
@@ -10,11 +11,17 @@ import './styles/landing.css';
  * 登录与工作台走 app.html，整页跳转后由 main.tsx 接管。
  */
 function goToLogin() {
-  window.location.assign('/login');
+  // 保留查询参数：邀约码 ?ref= 与推广参数 utm_* 要跟着进入登录/注册页。
+  window.location.assign(`/login${window.location.search}`);
 }
 
 function LandingRoot() {
   const [plans, setPlans] = useState<AdminPlan[]>([]);
+
+  useEffect(() => {
+    // 首次到站就记录来源，注册时随请求提交；只写本地存储，不发请求。
+    captureAttribution();
+  }, []);
 
   useEffect(() => {
     let active = true;

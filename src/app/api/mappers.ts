@@ -307,6 +307,7 @@ export function mapUser(row: AdminUserDto): AdminUser {
     orderCount: row.orderCount,
     apiCalls: row.apiCalls,
     ticketCount: row.ticketCount,
+    acquisition: row.acquisition ?? null,
   };
 }
 

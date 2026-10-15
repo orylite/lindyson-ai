@@ -154,6 +154,7 @@ describe('authRoutes', () => {
       }
       if (query.includes('SELECT id FROM users')) return queryResult([]);
       if (query.includes('INSERT INTO users')) return queryResult([{ id: userId, auth_version: 1 }]);
+      if (query.includes('INSERT INTO user_acquisitions')) return queryResult([]);
       if (query.includes('UPDATE registration_verification_codes SET consumed_at')) return queryResult([]);
       throw new Error(`未预期的查询：${query}`);
     });
@@ -171,11 +172,16 @@ describe('authRoutes', () => {
           password: 'Password123',
           verificationId,
           verificationCode,
+          attribution: { source: 'xhs', campaign: 'launch-2610', landingPath: '/', firstTouchAt: '2026-10-16T08:00:00.000Z' },
         },
       });
 
       expect(response.statusCode).toBe(200);
       expect(response.json()).toEqual({ user: profile });
+      const acquisitionCall = clientQuery.mock.calls.find(([sql]) => String(sql).includes('INSERT INTO user_acquisitions'));
+      expect(acquisitionCall?.[1]).toEqual([
+        userId, 'xiaohongshu', 'xhs', null, 'launch-2610', null, null, null, '/', '2026-10-16T08:00:00.000Z',
+      ]);
       expect(queries.some(query => query.includes('FROM plans'))).toBe(false);
       expect(queries.some(query => query.includes('credit_ledger'))).toBe(false);
       const insertCall = clientQuery.mock.calls.find(([sql]) => String(sql).includes('INSERT INTO users'));

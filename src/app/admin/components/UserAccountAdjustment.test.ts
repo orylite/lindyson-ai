@@ -30,6 +30,7 @@ const user: AdminUser = {
   orderCount: 1,
   apiCalls: 0,
   ticketCount: 0,
+  acquisition: null,
 };
 
 const plan: AdminPlan = {
