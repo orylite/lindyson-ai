@@ -3,7 +3,7 @@ import { useEffect,useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { LandingPage } from './app/components/LandingPage';
 import type { AdminPlan } from './app/data/admin';
-import { captureAttribution } from './app/state/attribution';
+import { trackVisit } from './app/state/attribution';
 import './styles/landing.css';
 
 /**
@@ -19,8 +19,8 @@ function LandingRoot() {
   const [plans, setPlans] = useState<AdminPlan[]>([]);
 
   useEffect(() => {
-    // 首次到站就记录来源，注册时随请求提交；只写本地存储，不发请求。
-    captureAttribution();
+    // 到站即上报访客来源（同一访客同一天同一来源一次），并记录注册归因。
+    trackVisit();
   }, []);
 
   useEffect(() => {

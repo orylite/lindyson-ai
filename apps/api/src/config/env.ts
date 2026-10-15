@@ -160,6 +160,8 @@ const envSchema = z.object({
   VOLC_BILLING_SYNC_RUNS_RETENTION_DAYS: z.coerce.number().int().positive().default(90),
   VOLC_BILLING_RETENTION_SWEEP_INTERVAL_MS: z.coerce.number().int().positive().default(24 * 60 * 60 * 1000),
   VOLC_BILLING_RETENTION_BATCH_SIZE: z.coerce.number().int().positive().max(20_000).default(5_000),
+  // 访客来源明细保留天数，worker 每天清理一次。
+  VISITOR_VISITS_RETENTION_DAYS: z.coerce.number().int().positive().default(180),
   PAYMENT_CONFIG_ENCRYPTION_KEY: optionalString,
   PAYMENT_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(10_000),
   PAYMENT_ORDER_EXPIRES_SECONDS: z.coerce.number().int().positive().default(7_200),

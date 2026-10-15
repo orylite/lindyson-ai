@@ -1,6 +1,6 @@
 import { endpointContracts } from '@lindyson/api-contracts';
 import { apiRequest, jsonBody } from '../api/client';
-import { captureAttribution } from '../state/attribution';
+import { captureAttribution, trackVisit } from '../state/attribution';
 import { captureReferralCode, clearReferralCode } from '../state/referrals';
 import { ArrowLeft,ArrowRight,KeyRound,Lock,Mail,Sparkles,UserRound,X } from 'lucide-react';
 import { useEffect,useState,type FormEvent } from 'react';
@@ -29,6 +29,8 @@ interface AuthPageProps {
 
 export function AuthPage({ mode, onLoginSuccess, onRegisterCodeRequest, onRegisterSuccess, onForgotPassword, onNavigate }: AuthPageProps) {
   const [linkReferral, setLinkReferral] = useState<string | null>(captureReferralCode);
+  // 直接打开登录/注册页的访客也要计入来源；从首页跳来的同源访问会被去重。
+  useEffect(() => { trackVisit(); }, []);
   const [manualReferral, setManualReferral] = useState('');
   const [referralError, setReferralError] = useState('');
   const cancelReferral = () => { clearReferralCode(); setLinkReferral(null); setManualReferral(''); setReferralError(''); };

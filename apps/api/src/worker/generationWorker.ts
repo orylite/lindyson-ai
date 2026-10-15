@@ -36,6 +36,7 @@ import {
 import { processInvoiceNotificationOutbox, processPaymentNotificationOutbox } from '../domain/notificationOutbox.js';
 import { processPendingOrderRefunds } from '../domain/ordersService.js';
 import { runProviderBillingRetentionSweep } from '../domain/providerBillingRetention.js';
+import { runVisitorVisitRetentionSweep } from '../domain/visitorVisits.js';
 import { toInt } from '../domain/serialization.js';
 import type {
   ProviderResponseCheckpointInput,
@@ -788,6 +789,17 @@ async function startGenerationWorker(lifecycle: GenerationWorkerLifecycle) {
   );
   const runBillingRetentionSweep = maintenanceGate.track(billingRetentionTask);
 
+  const visitorRetentionTask = createTrackedSingleFlightTask(
+    async () => {
+      const result = await runVisitorVisitRetentionSweep({
+        shouldContinue: () => !billingRetentionStopRequested,
+      });
+      if (result.deleted > 0) console.log(`访客来源明细保留清理：${JSON.stringify(result)}`);
+    },
+    error => logWorkerFailure('visitor-visits-retention-sweep-failed', error),
+  );
+  const runVisitorRetentionSweep = maintenanceGate.track(visitorRetentionTask);
+
   // 账务同步不能阻塞生成 worker 启动；事务锁与运行记录负责后台幂等。
   void runBillingSchedule();
   void runBillingRequests();
@@ -823,6 +835,17 @@ async function startGenerationWorker(lifecycle: GenerationWorkerLifecycle) {
     env.VOLC_BILLING_RETENTION_SWEEP_INTERVAL_MS,
   );
   lifecycle.registerStopScheduling(() => clearInterval(billingRetentionTimer));
+  // 访客来源明细与账务保留清理同一节奏：启动后延迟首次执行，之后每天一次。
+  const visitorRetentionStartupTimer = setTimeout(
+    () => void runVisitorRetentionSweep(),
+    BILLING_RETENTION_STARTUP_DELAY_MS,
+  );
+  lifecycle.registerStopScheduling(() => clearTimeout(visitorRetentionStartupTimer));
+  const visitorRetentionTimer = setInterval(
+    () => void runVisitorRetentionSweep(),
+    24 * 60 * 60 * 1000,
+  );
+  lifecycle.registerStopScheduling(() => clearInterval(visitorRetentionTimer));
 
   const worker = lifecycle.acquireStopSync(
     () => {
