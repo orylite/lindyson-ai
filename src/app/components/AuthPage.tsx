@@ -1,5 +1,6 @@
 import { endpointContracts } from '@lindyson/api-contracts';
 import { apiRequest, jsonBody } from '../api/client';
+import { captureAttribution } from '../state/attribution';
 import { captureReferralCode, clearReferralCode } from '../state/referrals';
 import { ArrowLeft,ArrowRight,KeyRound,Lock,Mail,Sparkles,UserRound,X } from 'lucide-react';
 import { useEffect,useState,type FormEvent } from 'react';
@@ -147,8 +148,10 @@ export function AuthPage({ mode, onLoginSuccess, onRegisterCodeRequest, onRegist
           });
           if (!result.valid) { setReferralError(result.message); return; }
         }
+        const attribution = captureAttribution();
         await onRegisterSuccess({
           ...(referralCode ? { referralCode } : {}),
+          ...(attribution ? { attribution } : {}),
           userName: userName.trim(),
           email: normalizeEmail(email),
           password,

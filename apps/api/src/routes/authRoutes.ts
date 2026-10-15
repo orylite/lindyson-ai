@@ -14,6 +14,7 @@ import {
 import { resolveTrustedRequestAppOrigin } from '../config/requestOrigin.js';
 import { pool, withTransaction } from '../db/pool.js';
 import { reconcileSubscription } from '../domain/subscriptionLifecycle.js';
+import { recordUserAcquisitionWithClient, resolveRegistrationAcquisition } from '../domain/userAcquisition.js';
 import { ensureDefaultAssetFolders, getUserProfile } from '../domain/users.js';
 import { sendPasswordResetEmail, sendRegisterCodeEmail, sendWelcomeEmail } from '../notifications/emailService.js';
 
@@ -167,6 +168,11 @@ export async function registerAuthRoutes(app: FastifyInstance) {
       const userId = userResult.rows[0]!.id;
 
       if (payload.referralCode) await bindReferralWithClient(client, userId, payload.referralCode);
+      await recordUserAcquisitionWithClient(
+        client,
+        userId,
+        resolveRegistrationAcquisition(payload.attribution, Boolean(payload.referralCode)),
+      );
       await ensureDefaultAssetFolders(client, userId);
       await client.query('UPDATE registration_verification_codes SET consumed_at = now() WHERE id = $1', [verification.id]);
       const profile = await getUserProfile(client, userId);

@@ -1,3 +1,5 @@
+import type { RegistrationAttribution } from '@lindyson/api-contracts';
+
 const USERNAME_PATTERN = /^[\p{Script=Han}A-Za-z0-9 _-]+$/u;
 const PASSWORD_LETTER_PATTERN = /[A-Za-z]/;
 const PASSWORD_DIGIT_PATTERN = /\d/;
@@ -5,6 +7,7 @@ const PASSWORD_SPACE_PATTERN = /\s/;
 
 export interface RegisterPayload {
   referralCode?: string;
+  attribution?: RegistrationAttribution;
   userName: string;
   email: string;
 }

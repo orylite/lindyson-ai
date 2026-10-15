@@ -1,3 +1,4 @@
+import { clearAttribution } from '../state/attribution';
 import { clearReferralCode } from '../state/referrals';
 import { endpointContracts, type EndpointRequestBody, type EndpointRequestParams, type EndpointResponse } from '@lindyson/api-contracts';
 import type { ImageGenerationReserveRequest,VideoGenerationReserveRequest } from '../data/admin';
@@ -44,6 +45,7 @@ export async function login(email: string, password: string) {
     sessionScoped: false,
   });
   clearReferralCode();
+  clearAttribution();
   beginAuthenticatedSession();
   return mapAccount(response.user);
 }

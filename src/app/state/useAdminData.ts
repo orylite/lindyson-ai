@@ -1,3 +1,4 @@
+import type { AcquisitionSource } from '@lindyson/api-contracts';
 import { keepPreviousData,useQuery,useQueryClient } from '@tanstack/react-query';
 import { useCallback,useEffect,useMemo,useRef,useState,type Dispatch,type SetStateAction } from 'react';
 import { toast } from 'sonner';
@@ -503,7 +504,7 @@ export function useAdminData({
   const queryClient = useQueryClient();
   const activeAdminTab = useMemo(() => adminTabFromPath(routePath), [routePath]);
   const adminEnabled = isAdminDataEnabled(routePath, accountEmail, accountRole);
-  const [userFilters, setUserFiltersState] = useState<{ search?: string; status?: AdminUser['status'] }>({});
+  const [userFilters, setUserFiltersState] = useState<{ search?: string; status?: AdminUser['status']; source?: AcquisitionSource }>({});
   const [orderFilters, setOrderFiltersState] = useState<{ search?: string; status?: AdminOrder['status']; userId?: string; from?: string; to?: string }>({});
   const [invoiceFilters, setInvoiceFiltersState] = useState<{ search?: string; status?: AdminInvoiceRequest['status']; userId?: string; orderId?: string }>({});
   const [ticketFilters, setTicketFiltersState] = useState<{ search?: string; status?: AdminTicket['status']; priority?: AdminTicket['priority'] }>({});

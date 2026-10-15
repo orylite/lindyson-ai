@@ -290,7 +290,7 @@ export async function getAdminAnnouncementsPage(input: CursorEndpointQuery<'admi
 export async function getAdminUsersPage(input: CursorEndpointQuery<'adminUsers'> = {}, signal?: AbortSignal) {
   return mapExactCursorPage(
     await apiRequest(
-      withCursorQuery('/api/admin/users', input, stringParams(input, ['search', 'status'])),
+      withCursorQuery('/api/admin/users', input, stringParams(input, ['search', 'status', 'source'])),
       endpointContracts.adminUsers.response,
       { signal },
     ),

@@ -52,6 +52,10 @@ describe('后台总览聚合', () => {
         { model: 'Seedance 2.0', billableTokens: 108900 },
         { model: 'Doubao Seed 2.0 Lite', billableTokens: 8200 },
       ],
+      acquisition_mix: [
+        { source: 'xiaohongshu', registrations: 40, paidUsers: 6, revenue: 119400 },
+        { source: 'direct', registrations: 20, paidUsers: 1, revenue: 19900 },
+      ],
       day_start: '2026-07-10T16:00:00.000Z',
       month_start: '2026-06-30T16:00:00.000Z',
     }]));
@@ -76,6 +80,10 @@ describe('后台总览聚合', () => {
         modelUsage: [
           { model: 'Seedance 2.0', billableTokens: 108900 },
           { model: 'Doubao Seed 2.0 Lite', billableTokens: 8200 },
+        ],
+        acquisitionMix: [
+          { source: 'xiaohongshu', registrations: 40, paidUsers: 6, revenue: 119400 },
+          { source: 'direct', registrations: 20, paidUsers: 1, revenue: 19900 },
         ],
         timezone: 'Asia/Shanghai',
       }));

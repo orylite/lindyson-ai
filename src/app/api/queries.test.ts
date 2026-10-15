@@ -667,6 +667,7 @@ function validAdminOverview() {
     sevenDayApiSuccessRate: 100,
     revenueTrend: [{ day: '2026-07-11', revenue: 100, orders: 1 }],
     modelUsage: [{ model: 'seedance-1.5-pro', billableTokens: 1000 }],
+    acquisitionMix: [{ source: 'xiaohongshu', registrations: 3, paidUsers: 1, revenue: 19900 }],
     timezone: 'Asia/Shanghai',
     dayStart: '2026-07-11T00:00:00+08:00',
     monthStart: '2026-07-01T00:00:00+08:00',

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { AcquisitionSource } from '@lindyson/api-contracts';
 import type {
   AdminAuditLog,
   AdminApiCostAttempt,
@@ -46,7 +47,7 @@ export interface AdminListControl<Filters extends Record<string, unknown>> {
 
 export interface AdminListControls {
   announcements: AdminListControl<{ search?: string }>;
-  users: AdminListControl<{ search?: string; status?: AdminUser['status'] }>;
+  users: AdminListControl<{ search?: string; status?: AdminUser['status']; source?: AcquisitionSource }>;
   orders: AdminListControl<{ search?: string; status?: AdminOrder['status']; userId?: string; from?: string; to?: string }>;
   invoices: AdminListControl<{ search?: string; status?: AdminInvoiceRequest['status']; userId?: string; orderId?: string }>;
   tickets: AdminListControl<{ search?: string; status?: AdminTicket['status']; priority?: AdminTicket['priority'] }>;

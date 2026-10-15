@@ -2,7 +2,7 @@
 
 ## 项目结构与模块组织
 
-本仓库由 Vite + React + TypeScript 前端和 `apps/api` Fastify API/worker 组成。前端有两个入口：首页 `index.html` → `src/landing.tsx`（只加载落地页、动效和图标，样式为 `src/styles/landing.css`，套餐接口按需加载），其余页面 `app.html` → `src/main.tsx`；登录、工作台和后台都走 `app.html`，首页的“开始创作 / 登录”按钮整页跳转到 `/login`。落地页新增的 Tailwind 类所在文件必须在 `landing.css` 的 `@source` 列表里，否则首页样式会缺失。应用根组件与路由在 `src/app/App.tsx`。构建会为文本资源额外生成 `.gz`，供 OpenResty `gzip_static` 使用。用户端页面位于 `src/app/components/`，管理后台位于 `src/app/admin/`，共享状态与业务规则位于 `src/app/state/`，生产数据类型与映射位于 `src/app/data/` 和 `src/app/api/`，测试夹具统一位于 `src/test/factories/`。后端路由、领域服务、队列和迁移分别位于 `apps/api/src/routes/`、`apps/api/src/domain/`、`apps/api/src/worker/` 和 `apps/api/migrations/`。通用 UI 组件统一从 `src/app/ui/` 导出。产品规则与接口边界见 `MCP_CHATGPT.md` 和 `docs/`。
+本仓库由 Vite + React + TypeScript 前端和 `apps/api` Fastify API/worker 组成。前端有两个入口：首页 `index.html` → `src/landing.tsx`（只加载落地页、动效和图标，样式为 `src/styles/landing.css`，套餐接口按需加载），其余页面 `app.html` → `src/main.tsx`；登录、工作台和后台都走 `app.html`，首页的“开始创作 / 登录”按钮整页跳转到 `/login` 并保留查询参数（邀约码 `?ref=` 与推广参数 `utm_*` / `from` 都要带过去）。注册来源在 `src/app/state/attribution.ts` 采集（localStorage，30 天，first-touch），注册时随 `attribution` 字段提交，服务端 `apps/api/src/domain/userAcquisition.ts` 按 `packages/api-contracts/src/acquisition.ts` 的白名单归类写入 `user_acquisitions`。落地页新增的 Tailwind 类所在文件必须在 `landing.css` 的 `@source` 列表里，否则首页样式会缺失。应用根组件与路由在 `src/app/App.tsx`。构建会为文本资源额外生成 `.gz`，供 OpenResty `gzip_static` 使用。用户端页面位于 `src/app/components/`，管理后台位于 `src/app/admin/`，共享状态与业务规则位于 `src/app/state/`，生产数据类型与映射位于 `src/app/data/` 和 `src/app/api/`，测试夹具统一位于 `src/test/factories/`。后端路由、领域服务、队列和迁移分别位于 `apps/api/src/routes/`、`apps/api/src/domain/`、`apps/api/src/worker/` 和 `apps/api/migrations/`。通用 UI 组件统一从 `src/app/ui/` 导出。产品规则与接口边界见 `MCP_CHATGPT.md` 和 `docs/`。
 
 ## 构建、测试与开发命令
 

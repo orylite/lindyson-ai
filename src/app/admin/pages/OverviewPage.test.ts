@@ -35,3 +35,19 @@ describe('管理员仪表盘模型使用占比', () => {
     ]);
   });
 });
+
+describe('管理员仪表盘注册来源分布', () => {
+  it('按注册数排序、换成中文标签并计算占比', async () => {
+    const { buildAcquisitionMix } = await import('./OverviewPage');
+    const result = buildAcquisitionMix([
+      { source: 'direct', registrations: 1, paidUsers: 0, revenue: 0 },
+      { source: 'xiaohongshu', registrations: 3, paidUsers: 1, revenue: 19900 },
+    ]);
+    expect(result.map(item => [item.label, item.share])).toEqual([['小红书', 75], ['直接访问', 25]]);
+  });
+
+  it('没有记录时不报错，占比为 0', async () => {
+    const { buildAcquisitionMix } = await import('./OverviewPage');
+    expect(buildAcquisitionMix([])).toEqual([]);
+  });
+});
