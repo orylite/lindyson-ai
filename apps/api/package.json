@@ -46,7 +46,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1075.0",
     "@aws-sdk/s3-request-presigner": "3.1075.0",
-    "@fastify/cors": "^10.0.2",
+    "@fastify/cors": "^11.3.1",
     "@fastify/formbody": "^8.0.2",
     "@fastify/jwt": "^10.1.0",
     "@fastify/middie": "9.3.4",
