@@ -11,7 +11,7 @@
 ### 安全
 
 - `TRUST_PROXY` 支持跳数和 IP/CIDR 列表，生产环境应只信任反向代理地址；**注意**：此前 `TRUST_PROXY=1` 等价于 `true`，现在表示信任最近 1 跳。
-- `docker-compose.yml` 的 API 端口默认只绑定 `127.0.0.1`（可用 `API_HOST_BIND` 覆盖）。
+- `docker-compose.yml` 改为单机生产栈（含前端 nginx 反代，API 默认 `TRUST_PROXY=1`，API 端口只绑定 `127.0.0.1`）；全栈测试的 mock 与第二站点入口拆到 `docker-compose.fullstack.yml`。
 - API 镜像改为以非 root 用户 `node` 运行。
 - 升级含已知漏洞的间接依赖（fast-jwt、tar、nanoid、postcss 等），CI 增加 `npm audit --audit-level=high` 门禁。
 

@@ -1,0 +1,26 @@
+# 全栈测试叠加文件：在单机栈之上加 mock 供应商与第二个站点入口（CN）。
+# 由 scripts/run-fullstack-tests.mjs 通过 COMPOSE_FILE=docker-compose.yml:docker-compose.fullstack.yml 加载，
+# 端口由该脚本的 WEB_HTTP_PORT=8080 / API_HOST_PORT 指定，不要单独用这个文件部署。
+services:
+  seedream-mock:
+    image: node:22-alpine
+    working_dir: /mock
+    command: ["node", "mockSeedreamServer.mjs"]
+    volumes:
+      - ./tests/fullstack/mockSeedreamServer.mjs:/mock/mockSeedreamServer.mjs:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:4400/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+
+  web-cn:
+    image: ${WEB_IMAGE:-lindyson-web:local}
+    pull_policy: never
+    depends_on:
+      - api
+      - web
+    ports:
+      - "${WEB_CN_HTTP_PORT:-8081}:80"
+    volumes:
+      - ./infra/nginx/fullstack-cn.conf:/etc/nginx/conf.d/default.conf:ro

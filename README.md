@@ -92,15 +92,58 @@ npm run dev
 | `npm run test:unit` | 前端与契约包单元测试（Vitest） |
 | `npm run check:api` | API 类型检查与单元测试 |
 | `npm run test:e2e` | Playwright 端到端测试（走 mock API） |
-| `npm run test:fullstack` | 独立 Docker 环境里的真实 PostgreSQL、Redis、API、worker 与浏览器链路 |
+| `npm run test:fullstack` | 用 `docker-compose.yml` 加 `docker-compose.fullstack.yml` 起一套真实 PostgreSQL、Redis、API、worker 与浏览器链路 |
 | `npm run build` / `npm run build:api` | 生产构建；前端构建会为文本资源额外生成 `.gz` |
 | `npm run check` | 以上全部，发布前跑一遍 |
 
-## 部署
+## 单机部署
 
-- API 与 worker 用同一镜像：`docker build -f apps/api/Dockerfile .`，再以 `node dist/server.js` 和 `node dist/worker/generationWorker.js` 两种命令启动；迁移用 `node dist/db/migrate.js`。
-- 前端是纯静态文件，`APP_RELEASE_ID=<版本号> npm run build` 后把 `dist/` 交给任意静态服务器；`version.json` 里的 `buildId` 与版本号一致，前端用它检测新版本。
-- `docker-compose.yml` 是本地与全栈测试用的参考编排，包含假供应商与 mock Seedream 服务，不是生产配置。生产部署的反向代理、证书、备份与机器信息不在本仓库。
+一台 2 核 4G 的机器就够跑：PostgreSQL、Redis、API、worker、前端 nginx 全在一个 `docker compose` 里。
+
+```bash
+git clone <本仓库地址> lindyson && cd lindyson
+```
+
+```bash
+cp .env.example .env
+```
+
+编辑 `.env`，至少填这些：
+
+| 变量 | 填什么 |
+|---|---|
+| `JWT_SECRET`、`MCP_OAUTH_SECRET`、`MCP_FILE_ENCRYPTION_KEY`、`REAL_PORTRAIT_TOKEN_ENCRYPTION_KEY`、`PAYMENT_CONFIG_ENCRYPTION_KEY` | 各自生成一个长随机串，不要复用 |
+| `POSTGRES_PASSWORD` | 数据库口令 |
+| `PUBLIC_BASE_URL`、`APP_BASE_URL`、`CORS_ORIGIN` | 都填你的站点地址，例如 `https://ai.example.com` |
+| `VITE_PUBLIC_SITE_URL` | 同上，用于前端构建 |
+| `ARK_API_KEY`、`TOS_*` | 火山引擎方舟与对象存储；先试用可以 `ENABLE_FAKE_PROVIDER=true` 且 `STORAGE_DRIVER=local` |
+| `BOOTSTRAP_ADMIN_EMAIL`、`BOOTSTRAP_ADMIN_PASSWORD` | 第一个管理员账号 |
+
+把运营主体和备案信息写到 `src/app/data/publicCompliance.local.json`（复制同目录模板改），然后启动：
+
+```bash
+docker compose up -d --build
+```
+
+创建管理员：
+
+```bash
+docker compose run --rm --no-deps migrate npm --workspace apps/api run db:bootstrap-admin:prod
+```
+
+浏览器打开 `http://你的服务器` 即可。`docker compose up` 会自动跑数据库迁移；升级版本时 `git pull` 后再执行一次 `docker compose up -d --build`。
+
+**HTTPS**：最省事的是在前面放一个 Caddy，`Caddyfile` 两行：
+
+```
+ai.example.com {
+    reverse_proxy 127.0.0.1:80
+}
+```
+
+把 `.env` 里的 `WEB_HTTP_PORT` 改成只给 Caddy 用的内网端口（例如 `8080`），`reverse_proxy` 指向它即可；这时 API 的 `TRUST_PROXY` 要改成 `2`（Caddy 和 web 两跳）。
+
+**不用 Docker**：API 与 worker 是同一份代码，`npm run build:api` 后分别用 `node dist/server.js` 和 `node dist/worker/generationWorker.js` 启动，迁移用 `node dist/db/migrate.js`；前端 `npm run build` 后把 `dist/` 交给任意静态服务器，并把 `/api/`、`/mcp`、`/oauth/`、`/.well-known/oauth-*` 反代到 API，参考 `infra/nginx/default.conf`。
 
 ## 第三方资源与许可
 

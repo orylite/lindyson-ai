@@ -1,9 +1,17 @@
+# Lindyson AI 单机部署：一台机器跑完整个栈。
+#   docker compose up -d --build
+# 变量从同目录 .env 读取（见 .env.example）。公网只需开放 web 的 80/443；
+# API 只绑定本机回环地址，TLS 在前面加 Caddy 或在 web 容器挂证书即可。
+# 全栈测试用 docker-compose.fullstack.yml 叠加（由 scripts/run-fullstack-tests.mjs 自动加载）。
+
 x-api-env: &api-env
   NODE_ENV: ${NODE_ENV:-production}
   HOST: ${HOST:-0.0.0.0}
   PORT: ${PORT:-4300}
   DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgres://lindyson:${POSTGRES_PASSWORD:-lindyson}@postgres:5432/lindyson}
   REDIS_URL: ${COMPOSE_REDIS_URL:-redis://redis:6379}
+  # 反向代理只有 web 容器这一跳；如果前面还有别的代理，按跳数或地址列表调整。
+  TRUST_PROXY: ${TRUST_PROXY:-1}
   JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set to a strong random value}
   CORS_ORIGIN: ${CORS_ORIGIN:?CORS_ORIGIN must be set to explicit HTTPS origins}
   PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?PUBLIC_BASE_URL must be set to the public HTTPS API origin}
@@ -83,7 +91,7 @@ x-api-env: &api-env
   VOLC_BILLING_PAGE_DELAY_MS: ${VOLC_BILLING_PAGE_DELAY_MS:-250}
   PAYMENT_CONFIG_ENCRYPTION_KEY: ${PAYMENT_CONFIG_ENCRYPTION_KEY:-}
   RESEND_API_KEY: ${RESEND_API_KEY:-}
-  RESEND_FROM: "${RESEND_FROM:-Lindyson AI <noreply@lindyson.com>}"
+  RESEND_FROM: "${RESEND_FROM:-Lindyson AI <noreply@example.com>}"
   RESEND_NOTIFY_TO: ${RESEND_NOTIFY_TO:-}
   RESEND_BLOCKED_TO: ${RESEND_BLOCKED_TO:-}
   QUEUE_CONCURRENCY: ${QUEUE_CONCURRENCY:-2}
@@ -92,21 +100,10 @@ x-api-env: &api-env
   ENABLE_FAKE_PROVIDER: ${ENABLE_FAKE_PROVIDER:-false}
   FAKE_PROVIDER_DELAY_MS: ${FAKE_PROVIDER_DELAY_MS:-1500}
 
-services:
-  seedream-mock:
-    profiles: ["fullstack"]
-    image: node:22-alpine
-    working_dir: /mock
-    command: ["node", "mockSeedreamServer.mjs"]
-    volumes:
-      - ./tests/fullstack/mockSeedreamServer.mjs:/mock/mockSeedreamServer.mjs:ro
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:4400/health"]
-      interval: 2s
-      timeout: 2s
-      retries: 10
 
+services:
   postgres:
+    restart: unless-stopped
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: lindyson
@@ -121,7 +118,9 @@ services:
       timeout: 5s
       retries: 5
 
+
   redis:
+    restart: unless-stopped
     image: redis:7-alpine
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
@@ -131,6 +130,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
 
   migrate:
     build:
@@ -145,12 +145,18 @@ services:
       VOLC_ARK_ASSET_ACCESS_KEY_ID: ""
       VOLC_ARK_ASSET_SECRET_ACCESS_KEY: ""
       REAL_PORTRAIT_TOKEN_ENCRYPTION_KEY: ""
+      # 只有一次性的 migrate 容器拿到管理员初始化变量，长期运行的 api/worker 不拿。
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      BOOTSTRAP_RESET_ADMIN_PASSWORD: ${BOOTSTRAP_RESET_ADMIN_PASSWORD:-false}
     depends_on:
       postgres:
         condition: service_healthy
     command: ["npm", "--workspace", "apps/api", "run", "db:migrate:prod"]
 
+
   api:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: apps/api/Dockerfile
@@ -167,7 +173,9 @@ services:
       - local-storage:/app/storage
     command: ["npm", "--workspace", "apps/api", "run", "start"]
 
+
   worker:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: apps/api/Dockerfile
@@ -181,25 +189,23 @@ services:
       - local-storage:/app/storage
     command: ["npm", "--workspace", "apps/api", "run", "worker:start"]
 
-  nginx:
-    image: ${FULLSTACK_FRONTEND_IMAGE:-lindyson-integration-frontend:local}
+
+  web:
+    # 前端静态文件 + nginx 反代：/api、/mcp、/oauth 转给 api，其余返回网页。
+    image: ${WEB_IMAGE:-lindyson-web:local}
     build:
       context: .
       dockerfile: Dockerfile.frontend
+      args:
+        APP_RELEASE_ID: ${APP_RELEASE_ID:-}
+        VITE_PUBLIC_SITE_URL: ${VITE_PUBLIC_SITE_URL:-}
+        VITE_SUPPORT_QR_URL: ${VITE_SUPPORT_QR_URL:-}
+        VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL: ${VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL:-}
     depends_on:
       - api
     ports:
-      - "8080:80"
-
-  nginx-cn:
-    image: ${FULLSTACK_FRONTEND_IMAGE:-lindyson-integration-frontend:local}
-    pull_policy: never
-    depends_on:
-      - api
-    ports:
-      - "8081:80"
-    volumes:
-      - ./infra/nginx/fullstack-cn.conf:/etc/nginx/conf.d/default.conf:ro
+      - "${WEB_HTTP_PORT:-80}:80"
+    restart: unless-stopped
 
 volumes:
   postgres-data:
