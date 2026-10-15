@@ -1,4 +1,8 @@
 <p align="center">
+  <strong>简体中文</strong> · <a href="README.en.md">English</a>
+</p>
+
+<p align="center">
   <img src="docs/readme-assets/hero.webp" alt="让商品创意直接动起来：AI 视频、图片生成与 TikTok 发布，在一个工作台完成" width="100%">
 </p>
 
@@ -33,8 +37,6 @@
   <a href="SECURITY.md">安全</a> ·
   <a href="#-联系与交流">联系我们</a>
 </p>
-
-> **English**: Lindyson AI Video Generator is an AI video and image generation workspace for e-commerce and short-video teams, built on Volcengine Ark (Seedance / Seedream). It ships a React front end, a Fastify API with a BullMQ worker, PostgreSQL, Redis, credit-based billing, an admin console, and an MCP server with OAuth 2.1. The UI and docs are in Simplified Chinese. A no-key demo stack is one `docker compose` command away, see [五分钟试玩](#-五分钟试玩).
 
 ---
 
