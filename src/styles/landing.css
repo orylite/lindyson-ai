@@ -1,0 +1,12 @@
+/* 首页独立样式：只扫描落地页用到的源码，不包含用户端 product.css 和字体。 */
+@import 'tailwindcss' source(none);
+@source '../landing.tsx';
+@source '../app/components/LandingPage.tsx';
+@source '../app/components/PlanCard.tsx';
+@source '../app/components/PublicComplianceNotice.tsx';
+@source '../app/ui/*.tsx';
+@source '../app/data/landingContent.ts';
+@source '../app/data/planIcons.ts';
+@source '../app/data/realPortraits.ts';
+@import './theme.css';
+@import './globals.css';

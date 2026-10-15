@@ -1,0 +1,17 @@
+.DS_Store
+._*
+**/._*
+.env
+.env.*
+node_modules
+dist
+apps/api/dist
+packages/api-contracts/dist
+coverage
+.tmp
+test-results
+playwright-report
+storage
+*.log
+
+**/.DS_Store

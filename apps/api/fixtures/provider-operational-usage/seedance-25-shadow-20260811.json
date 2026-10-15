@@ -1,0 +1,274 @@
+{
+  "manifestVersion": "lindyson.provider-operational-usage/v1",
+  "manifestId": "seedance-25-shadow-historical-20260811-v1",
+  "generatedAt": "2026-08-12T00:00:00.000Z",
+  "records": [
+    {
+      "provider": "volcengine-ark",
+      "serviceType": "video",
+      "model": "Seedance 2.5",
+      "operation": "video-generation-shadow-canary",
+      "costOwnerUserId": "00000000-0000-4000-8000-00000000ad01",
+      "purpose": "deployment-canary",
+      "initiatorType": "release-automation",
+      "initiatedByUserId": null,
+      "sourceRunId": "seedance-25-shadow-20260811T212900Z",
+      "sourceItemKey": "no-reference",
+      "providerTaskId": null,
+      "providerOperationId": null,
+      "providerRequestId": null,
+      "status": "success",
+      "providerReached": true,
+      "occurredAt": "2026-08-11T21:29:00.000Z",
+      "localAccountingDate": "2026-08-12",
+      "usageEvidence": {
+        "evidenceKind": "seedance-25-shadow-canary/v1",
+        "scenario": "no-reference",
+        "completionTokens": 48437,
+        "billableTokens": 48437,
+        "hasVideoInput": false,
+        "providerTaskIdSha256Prefix": "60d2579d5a42a31f",
+        "occurredAtBasis": "source-run-id",
+        "sourceAuditSha256": "dcb1f03585a178be94e98b61306b1e08ac79156384a8ae8e2f3d5d7797bd466a"
+      },
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T212900Z/canary.ndjson",
+      "evidenceSha256": "dcb1f03585a178be94e98b61306b1e08ac79156384a8ae8e2f3d5d7797bd466a",
+      "valuation": {
+        "pricingStatus": "priced",
+        "priceVersion": "volcengine-seedance-2026-08-10",
+        "pricingSourceUrl": "https://docs.volcengine.com/docs/82379/1544106?lang=zh",
+        "unitPriceSnapshot": {
+          "calculationMethod": "sum-of-rounded-components/v1",
+          "components": [
+            {
+              "key": "completion-tokens",
+              "quantity": "48437",
+              "unit": "token",
+              "unitSize": "1000000",
+              "unitPriceCny": "70.000000",
+              "estimatedCostCny": "3.390590"
+            }
+          ]
+        },
+        "estimatedCostCny": "3.390590",
+        "currency": "CNY",
+        "evidenceSha256": "dcb1f03585a178be94e98b61306b1e08ac79156384a8ae8e2f3d5d7797bd466a"
+      }
+    },
+    {
+      "provider": "volcengine-ark",
+      "serviceType": "video",
+      "model": "Seedance 2.5",
+      "operation": "video-generation-shadow-canary",
+      "costOwnerUserId": "00000000-0000-4000-8000-00000000ad01",
+      "purpose": "deployment-canary",
+      "initiatorType": "release-automation",
+      "initiatedByUserId": null,
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "no-reference",
+      "providerTaskId": null,
+      "providerOperationId": null,
+      "providerRequestId": null,
+      "status": "success",
+      "providerReached": true,
+      "occurredAt": "2026-08-11T21:33:00.000Z",
+      "localAccountingDate": "2026-08-12",
+      "usageEvidence": {
+        "evidenceKind": "seedance-25-shadow-canary/v1",
+        "scenario": "no-reference",
+        "completionTokens": 48437,
+        "billableTokens": 48437,
+        "hasVideoInput": false,
+        "providerTaskIdSha256Prefix": "e9922e90f06c4d04",
+        "occurredAtBasis": "source-run-id",
+        "sourceAuditSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      },
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de",
+      "valuation": {
+        "pricingStatus": "priced",
+        "priceVersion": "volcengine-seedance-2026-08-10",
+        "pricingSourceUrl": "https://docs.volcengine.com/docs/82379/1544106?lang=zh",
+        "unitPriceSnapshot": {
+          "calculationMethod": "sum-of-rounded-components/v1",
+          "components": [{ "key": "completion-tokens", "quantity": "48437", "unit": "token", "unitSize": "1000000", "unitPriceCny": "70.000000", "estimatedCostCny": "3.390590" }]
+        },
+        "estimatedCostCny": "3.390590",
+        "currency": "CNY",
+        "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      }
+    },
+    {
+      "provider": "volcengine-ark",
+      "serviceType": "video",
+      "model": "Seedance 2.5",
+      "operation": "video-generation-shadow-canary",
+      "costOwnerUserId": "00000000-0000-4000-8000-00000000ad01",
+      "purpose": "deployment-canary",
+      "initiatorType": "release-automation",
+      "initiatedByUserId": null,
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "reference-video",
+      "providerTaskId": null,
+      "providerOperationId": null,
+      "providerRequestId": null,
+      "status": "success",
+      "providerReached": true,
+      "occurredAt": "2026-08-11T21:33:00.000Z",
+      "localAccountingDate": "2026-08-12",
+      "usageEvidence": {
+        "evidenceKind": "seedance-25-shadow-canary/v1",
+        "scenario": "reference-video",
+        "completionTokens": 96475,
+        "billableTokens": 96475,
+        "hasVideoInput": true,
+        "providerTaskIdSha256Prefix": "161df6d1310a87e0",
+        "occurredAtBasis": "source-run-id",
+        "sourceAuditSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      },
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de",
+      "valuation": {
+        "pricingStatus": "priced",
+        "priceVersion": "volcengine-seedance-2026-08-10",
+        "pricingSourceUrl": "https://docs.volcengine.com/docs/82379/1544106?lang=zh",
+        "unitPriceSnapshot": {
+          "calculationMethod": "sum-of-rounded-components/v1",
+          "components": [{ "key": "completion-tokens", "quantity": "96475", "unit": "token", "unitSize": "1000000", "unitPriceCny": "42.000000", "estimatedCostCny": "4.051950" }]
+        },
+        "estimatedCostCny": "4.051950",
+        "currency": "CNY",
+        "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      }
+    },
+    {
+      "provider": "volcengine-ark",
+      "serviceType": "video",
+      "model": "Seedance 2.5",
+      "operation": "video-generation-shadow-canary",
+      "costOwnerUserId": "00000000-0000-4000-8000-00000000ad01",
+      "purpose": "deployment-canary",
+      "initiatorType": "release-automation",
+      "initiatedByUserId": null,
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "audio-only",
+      "providerTaskId": null,
+      "providerOperationId": null,
+      "providerRequestId": null,
+      "status": "success",
+      "providerReached": true,
+      "occurredAt": "2026-08-11T21:33:00.000Z",
+      "localAccountingDate": "2026-08-12",
+      "usageEvidence": {
+        "evidenceKind": "seedance-25-shadow-canary/v1",
+        "scenario": "audio-only",
+        "completionTokens": 48437,
+        "billableTokens": 48437,
+        "hasVideoInput": false,
+        "providerTaskIdSha256Prefix": "dbcda295688f228a",
+        "occurredAtBasis": "source-run-id",
+        "sourceAuditSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      },
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de",
+      "valuation": {
+        "pricingStatus": "priced",
+        "priceVersion": "volcengine-seedance-2026-08-10",
+        "pricingSourceUrl": "https://docs.volcengine.com/docs/82379/1544106?lang=zh",
+        "unitPriceSnapshot": {
+          "calculationMethod": "sum-of-rounded-components/v1",
+          "components": [{ "key": "completion-tokens", "quantity": "48437", "unit": "token", "unitSize": "1000000", "unitPriceCny": "70.000000", "estimatedCostCny": "3.390590" }]
+        },
+        "estimatedCostCny": "3.390590",
+        "currency": "CNY",
+        "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      }
+    },
+    {
+      "provider": "volcengine-ark",
+      "serviceType": "video",
+      "model": "Seedance 2.5",
+      "operation": "video-generation-shadow-canary",
+      "costOwnerUserId": "00000000-0000-4000-8000-00000000ad01",
+      "purpose": "deployment-canary",
+      "initiatorType": "release-automation",
+      "initiatedByUserId": null,
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "first-last-adaptive",
+      "providerTaskId": null,
+      "providerOperationId": null,
+      "providerRequestId": null,
+      "status": "success",
+      "providerReached": true,
+      "occurredAt": "2026-08-11T21:33:00.000Z",
+      "localAccountingDate": "2026-08-12",
+      "usageEvidence": {
+        "evidenceKind": "seedance-25-shadow-canary/v1",
+        "scenario": "first-last-adaptive",
+        "completionTokens": 48437,
+        "billableTokens": 48437,
+        "hasVideoInput": false,
+        "providerTaskIdSha256Prefix": "d1e0082b06b063b6",
+        "occurredAtBasis": "source-run-id",
+        "sourceAuditSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      },
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de",
+      "valuation": {
+        "pricingStatus": "priced",
+        "priceVersion": "volcengine-seedance-2026-08-10",
+        "pricingSourceUrl": "https://docs.volcengine.com/docs/82379/1544106?lang=zh",
+        "unitPriceSnapshot": {
+          "calculationMethod": "sum-of-rounded-components/v1",
+          "components": [{ "key": "completion-tokens", "quantity": "48437", "unit": "token", "unitSize": "1000000", "unitPriceCny": "70.000000", "estimatedCostCny": "3.390590" }]
+        },
+        "estimatedCostCny": "3.390590",
+        "currency": "CNY",
+        "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      }
+    },
+    {
+      "provider": "volcengine-ark",
+      "serviceType": "video",
+      "model": "Seedance 2.5",
+      "operation": "video-generation-shadow-canary",
+      "costOwnerUserId": "00000000-0000-4000-8000-00000000ad01",
+      "purpose": "deployment-canary",
+      "initiatorType": "release-automation",
+      "initiatedByUserId": null,
+      "sourceRunId": "seedance-25-shadow-20260811T213300Z",
+      "sourceItemKey": "720p-30s",
+      "providerTaskId": null,
+      "providerOperationId": null,
+      "providerRequestId": null,
+      "status": "success",
+      "providerReached": true,
+      "occurredAt": "2026-08-11T21:33:00.000Z",
+      "localAccountingDate": "2026-08-12",
+      "usageEvidence": {
+        "evidenceKind": "seedance-25-shadow-canary/v1",
+        "scenario": "720p-30s",
+        "completionTokens": 648900,
+        "billableTokens": 648900,
+        "hasVideoInput": false,
+        "providerTaskIdSha256Prefix": "3396ce62c37fcdb2",
+        "occurredAtBasis": "source-run-id",
+        "sourceAuditSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      },
+      "evidencePath": "/root/lindyson-api/releases/seedance-25-shadow-20260811T213300Z/canary.ndjson",
+      "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de",
+      "valuation": {
+        "pricingStatus": "priced",
+        "priceVersion": "volcengine-seedance-2026-08-10",
+        "pricingSourceUrl": "https://docs.volcengine.com/docs/82379/1544106?lang=zh",
+        "unitPriceSnapshot": {
+          "calculationMethod": "sum-of-rounded-components/v1",
+          "components": [{ "key": "completion-tokens", "quantity": "648900", "unit": "token", "unitSize": "1000000", "unitPriceCny": "70.000000", "estimatedCostCny": "45.423000" }]
+        },
+        "estimatedCostCny": "45.423000",
+        "currency": "CNY",
+        "evidenceSha256": "e3752980dffa7c76a258f5841c23ddfa0f66ec360e70fb636410fe048ab4d5de"
+      }
+    }
+  ]
+}

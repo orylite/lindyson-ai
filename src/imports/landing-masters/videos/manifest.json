@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-25T19:29:41Z",
+  "generationRunId": "landing-20260725T192941398Z",
+  "provider": "volcengine-ark",
+  "model": {
+    "label": "Seedance 2.0",
+    "id": "doubao-seedance-2-0-260128"
+  },
+  "settings": {
+    "aspectRatio": "9:16",
+    "durationSeconds": 5,
+    "resolution": "1080p",
+    "generateAudio": false,
+    "firstFrameMode": "exact supplied campaign image"
+  },
+  "temporaryTosObjectsDeleted": true,
+  "userLedgerRecordsCreated": false,
+  "totalTokens": 735075,
+  "items": [
+    {
+      "id": "beauty",
+      "sourceImage": "/landing/beauty-campaign.webp",
+      "providerTaskId": "cgt-20260726032941-6xzlt",
+      "prompt": "Use the supplied image as the exact first frame and preserve the same unbranded amber glass serum bottle, dropper, proportions, materials, colors, and product silhouette throughout. Create a premium five-second vertical beauty commercial shot with a very slow controlled camera orbit and subtle dolly-in. Warm golden caustic reflections glide across the glass while restrained magenta light softly breathes in the background; a few elegant dust particles drift with shallow depth of field. The bottle remains physically stable and sharply recognizable. No liquid splashes, no hands, no new objects, no morphing, no duplicate product, no readable text, no logo, no watermark, no cuts.",
+      "tokens": 245025,
+      "master": {
+        "path": "src/imports/landing-masters/videos/beauty-seedance-master.mp4",
+        "sha256": "3151615b65c3dfc4b23438b4e3656ae5cadbeae1ffdc0a667e2c5b888b60b115",
+        "bytes": 4761866,
+        "width": 1080,
+        "height": 1920,
+        "durationSeconds": 5.041667
+      },
+      "web": {
+        "path": "public/landing/beauty-campaign.mp4",
+        "sha256": "6ec5e0b4fa31c18bb489cf9b5bf2decdb636a6de7838b4e86fe7156ece63c0ed",
+        "bytes": 530483,
+        "codec": "h264",
+        "crf": 30,
+        "preset": "slow",
+        "width": 720,
+        "height": 1280,
+        "frameRate": 24,
+        "durationSeconds": 5.041667
+      }
+    },
+    {
+      "id": "fashion",
+      "sourceImage": "/landing/fashion-campaign.webp",
+      "providerTaskId": "cgt-20260726032941-hlwp5",
+      "prompt": "Use the supplied image as the exact first frame and preserve the same unbranded black running shoe, blue panels, sole geometry, materials, colors, and silhouette throughout. Create a premium five-second vertical footwear commercial with a low-angle cinematic push-in and a slight lateral camera arc. Electric-blue light trails sweep behind the shoe and fine particles move across the floor to communicate speed while the shoe itself remains stable, crisp, and fully recognizable. No foot, no person, no added product, no morphing, no deformed laces or sole, no readable text, no logo, no watermark, no cuts.",
+      "tokens": 245025,
+      "master": {
+        "path": "src/imports/landing-masters/videos/fashion-seedance-master.mp4",
+        "sha256": "2f2072abbf81cf07958608ee9f2dc447a5b109023a734c7a96add6896091a672",
+        "bytes": 5573040,
+        "width": 1080,
+        "height": 1920,
+        "durationSeconds": 5.041667
+      },
+      "web": {
+        "path": "public/landing/fashion-campaign.mp4",
+        "sha256": "ff76b1d7523e78496f0312e91f7fd2ac9439132fc4d0d8858df2464428c41c0c",
+        "bytes": 588045,
+        "codec": "h264",
+        "crf": 30,
+        "preset": "slow",
+        "width": 720,
+        "height": 1280,
+        "frameRate": 24,
+        "durationSeconds": 5.041667
+      }
+    },
+    {
+      "id": "tech",
+      "sourceImage": "/landing/tech-campaign.webp",
+      "providerTaskId": "cgt-20260726032941-gw9sp",
+      "prompt": "Use the supplied image as the exact first frame and preserve the same unbranded metallic true-wireless earbuds, charging case, open lid, proportions, materials, colors, and silhouette throughout. Create a premium five-second vertical consumer-electronics commercial with a slow precise camera orbit and subtle parallax. Cool cyan volumetric light sweeps gently across the metal surfaces, with restrained atmospheric haze and a few floating particles; reflections move but the product remains stable and sharply recognizable. No hands, no added devices, no morphing, no lid movement, no duplicate earbuds, no readable text, no logo, no watermark, no cuts.",
+      "tokens": 245025,
+      "master": {
+        "path": "src/imports/landing-masters/videos/tech-seedance-master.mp4",
+        "sha256": "ea5c901dcd3fdd95e4cf029f3b3df3386b87443937a4c5618d36b3f9f2e0fcce",
+        "bytes": 4536311,
+        "width": 1080,
+        "height": 1920,
+        "durationSeconds": 5.041667
+      },
+      "web": {
+        "path": "public/landing/tech-campaign.mp4",
+        "sha256": "57c2f51e25e64798dd9dd8e46096c72f7b013c93c131aaa3a16207899dbf87a5",
+        "bytes": 352982,
+        "codec": "h264",
+        "crf": 30,
+        "preset": "slow",
+        "width": 720,
+        "height": 1280,
+        "frameRate": 24,
+        "durationSeconds": 5.041667
+      }
+    }
+  ]
+}

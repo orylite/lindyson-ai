@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /app
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+
+Sitemap: https://www.lindyson.com/sitemap.xml

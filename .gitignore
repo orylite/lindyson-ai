@@ -1,0 +1,33 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+apps/api/dist/
+coverage/
+test-results/
+playwright-report/
+storage/
+*.log
+
+# 2026-10-16 开源准备：临时包、验证证据、归档与 macOS 杂项
+.tmp/
+.tmp_*
+artifacts/
+output/
+tmp/
+deliverables/
+*.tar
+*.tgz
+._*
+__MACOSX/
+packages/api-contracts/dist/
+# 运维文件已迁至 lindyson-ops，产品仓库不跟踪
+docker-compose.hk.yml
+LINDYSON_CODEX_HANDOFF.md
+# 正式站点专用配置与素材（仓库只保留模板）
+src/app/data/publicCompliance.local.json
+public/support-qr.png
+# 火山引擎官方教程媒体：无再分发授权，不进仓库；正式站点自行放置并设置 VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL
+public/tutorials/seedream-interactive-*

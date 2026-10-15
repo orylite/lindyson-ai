@@ -1,0 +1,16 @@
+{
+  "companyName": "示例运营主体有限公司（请替换）",
+  "legal": {
+    "privacyContactEmail": "privacy@example.com",
+    "effectiveDate": "2026 年 1 月 1 日"
+  },
+  "registrations": {
+    "icp": {
+      "label": "京ICP备00000000号-1",
+      "url": "https://beian.miit.gov.cn/"
+    },
+    "publicSecurity": null,
+    "aiApplication": null,
+    "aiModel": null
+  }
+}
