@@ -3,10 +3,16 @@ import { useState } from 'react';
 import { Dialog } from '../ui';
 
 const OFFICIAL_TUTORIAL_URL = 'https://docs.volcengine.com/docs/82379/2582774?lang=zh';
-const VIDEO_URL = '/tutorials/seedream-interactive-editing.mp4';
-const VIDEO_POSTER_URL = '/tutorials/seedream-interactive-editing-poster.webp';
-const INPUT_IMAGE_URL = '/tutorials/seedream-interactive-input.webp';
-const OUTPUT_IMAGE_URL = '/tutorials/seedream-interactive-output.webp';
+
+// 演示媒体是火山引擎官方教程素材，不随仓库分发。部署方把转码后的文件放到静态目录，
+// 用 VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL 指定目录（例如 /tutorials）；未配置时只展示文字与官方链接。
+const TUTORIAL_MEDIA_BASE_URL = (import.meta.env?.VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL ?? '').trim().replace(/\/+$/, '');
+const mediaUrl = (fileName: string) => TUTORIAL_MEDIA_BASE_URL ? `${TUTORIAL_MEDIA_BASE_URL}/${fileName}` : null;
+const VIDEO_URL = mediaUrl('seedream-interactive-editing.mp4');
+const VIDEO_POSTER_URL = mediaUrl('seedream-interactive-editing-poster.webp');
+const INPUT_IMAGE_URL = mediaUrl('seedream-interactive-input.webp');
+const OUTPUT_IMAGE_URL = mediaUrl('seedream-interactive-output.webp');
+const MEDIA_NOT_CONFIGURED_MESSAGE = '演示媒体未配置，请查看官方教程';
 
 const TUTORIAL_DESCRIPTION = '支持通过坐标、框选、箭头等多种方式指定编辑位置，精准编辑图片，实现局部元素替换、物品定位、区域生成等精细化操作。';
 
@@ -52,13 +58,15 @@ export function SeedreamInteractiveTutorialModal({ onClose }: SeedreamInteractiv
                 <h3 id="seedream-tutorial-video-label" className="text-sm font-semibold text-white">演示视频</h3>
               </div>
               <div className="product-media-surface flex w-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black" style={{ aspectRatio: '2352 / 1134' }}>
-                {videoFailed ? (
+                {!VIDEO_URL ? (
+                  <MediaFailure message={MEDIA_NOT_CONFIGURED_MESSAGE} />
+                ) : videoFailed ? (
                   <MediaFailure message="演示视频加载失败" />
                 ) : (
                   <video
                     data-testid="seedream-tutorial-video"
                     src={VIDEO_URL}
-                    poster={VIDEO_POSTER_URL}
+                    poster={VIDEO_POSTER_URL ?? undefined}
                     controls
                     playsInline
                     preload="metadata"
@@ -104,7 +112,7 @@ export function SeedreamInteractiveTutorialModal({ onClose }: SeedreamInteractiv
 
 function TutorialImage({ label, src, alt, failureMessage }: {
   label: string;
-  src: string;
+  src: string | null;
   alt: string;
   failureMessage: string;
 }) {
@@ -117,7 +125,9 @@ function TutorialImage({ label, src, alt, failureMessage }: {
         {label}
       </figcaption>
       <div className="flex min-h-44 w-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/50 sm:min-h-52 lg:min-h-0">
-        {failed ? (
+        {!src ? (
+          <MediaFailure message={MEDIA_NOT_CONFIGURED_MESSAGE} />
+        ) : failed ? (
           <MediaFailure message={failureMessage} />
         ) : (
           <img
