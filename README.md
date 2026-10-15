@@ -1,8 +1,10 @@
-# Lindyson AI
+# Lindyson AI Video Generator
 
-面向电商与短视频团队的 AI 内容创作工作台：用火山引擎方舟的 Seedance 生成商品视频、Seedream 生成和编辑商品图，沉淀数字资产，管理积分与订阅，并通过 MCP 让 ChatGPT、Codex 等客户端直接调用生成能力。
+**面向电商与短视频团队的 AI 视频与图片生成工作台**
 
-> English: Lindyson AI is an AI video and image generation workspace for e-commerce teams, built on Volcengine Ark (Seedance / Seedream). It ships a React front end, a Fastify API with a BullMQ worker, PostgreSQL, Redis, credit-based billing, an admin console, and an MCP server with OAuth. Chinese is the primary language of the UI and docs.
+用火山引擎方舟的 Seedance 生成商品视频、Seedream 生成和编辑商品图，沉淀数字资产，管理积分与订阅，并通过 MCP 让 ChatGPT、Codex 等客户端直接调用生成能力。
+
+> English: Lindyson AI Video Generator is an AI video and image generation workspace for e-commerce and short-video teams, built on Volcengine Ark (Seedance / Seedream). It ships a React front end, a Fastify API with a BullMQ worker, PostgreSQL, Redis, credit-based billing, an admin console, and an MCP server with OAuth 2.1. The UI and docs are in Simplified Chinese.
 
 ## 功能
 
