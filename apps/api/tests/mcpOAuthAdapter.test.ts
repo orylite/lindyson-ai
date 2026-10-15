@@ -29,3 +29,14 @@ it('并发消费只有首次成功，拒绝重放', async () => {
   expect(results.map((result) => result.status)).toEqual(['fulfilled', 'rejected']);
   expect(query.mock.calls[0]![0]).toContain('consumed_at IS NULL');
 });
+
+it('动态注册的 Client 默认 24 小时过期，产生授权后转为长期保留', async () => {
+  query.mockResolvedValue({ rows: [], rowCount: 1 });
+  await new PostgresOAuthAdapter('Client').upsert('client-1', { client_id: 'client-1' } as never);
+  expect(query.mock.calls[0]![1][6]).toBe(24 * 60 * 60);
+  query.mockClear();
+  await new PostgresOAuthAdapter('Grant').upsert('grant-1', { clientId: 'client-1', accountId: 'user:1' }, 3600);
+  expect(query).toHaveBeenCalledTimes(2);
+  expect(query.mock.calls[1]![0]).toContain("kind='Client'");
+  expect(query.mock.calls[1]![1]).toEqual([hashSecret('Client:client-1')]);
+});

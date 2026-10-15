@@ -1,3 +1,4 @@
+import { hkdfSync } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -404,4 +405,12 @@ function loadLocalEnv() {
       process.loadEnvFile(filePath);
     }
   }
+}
+
+/**
+ * 用 HKDF 从 JWT_SECRET 派生各用途独立的 32 字节签名密钥，避免会话签名密钥被直接复用于
+ * 限流键哈希、本地存储 URL 签名和分页游标签名。purpose 不同则密钥不同；JWT 本身仍直接用 JWT_SECRET。
+ */
+export function deriveSigningKey(purpose: string): Buffer {
+  return Buffer.from(hkdfSync('sha256', env.JWT_SECRET, 'lindyson-signing-v1', purpose, 32));
 }

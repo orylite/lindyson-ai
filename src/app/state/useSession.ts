@@ -131,6 +131,15 @@ export function useSession() {
     void mutations.logout().catch(() => undefined);
   }, []);
 
+  // 先向服务端递增 auth_version（需要当前会话），再清本地状态；失败则退回普通退出。
+  const logoutAllDevices = useCallback(async () => {
+    try {
+      await mutations.logoutAllDevices();
+    } finally {
+      clearApiSession('logout');
+    }
+  }, []);
+
   const clearSessionState = useCallback(() => {
     setAccountState(EMPTY_ACCOUNT);
     setFeatureFlags(initialFeatureFlags);
@@ -166,6 +175,7 @@ export function useSession() {
     requestPasswordReset,
     resetPassword,
     logoutAccount,
+    logoutAllDevices,
     clearSessionState,
     canUseTikTokAccounts: isAdminUser || featureFlags.tiktokAccounts,
     canUseTikTokPublish: isAdminUser || featureFlags.tiktokPublish,

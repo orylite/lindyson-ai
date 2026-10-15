@@ -21,10 +21,10 @@ describe('注册认证规则', () => {
 
   it('校验密码长度、字母数字组合和空格限制', () => {
     expect(validateRegisterPassword('abc12345')).toBeNull();
-    expect(validateRegisterPassword('abc1234')).toBe('密码需为 8-32 位，并包含字母和数字');
-    expect(validateRegisterPassword('abcdefgh')).toBe('密码需为 8-32 位，并包含字母和数字');
-    expect(validateRegisterPassword('12345678')).toBe('密码需为 8-32 位，并包含字母和数字');
-    expect(validateRegisterPassword('abc 1234')).toBe('密码需为 8-32 位，并包含字母和数字');
+    expect(validateRegisterPassword('abc1234')).toBe('密码需为 8-128 位，并包含字母和数字');
+    expect(validateRegisterPassword('abcdefgh')).toBe('密码需为 8-128 位，并包含字母和数字');
+    expect(validateRegisterPassword('12345678')).toBe('密码需为 8-128 位，并包含字母和数字');
+    expect(validateRegisterPassword('abc 1234')).toBe('密码需为 8-128 位，并包含字母和数字');
   });
 
   it('注册成功后创建与可订阅套餐无关的零积分免费账户', () => {

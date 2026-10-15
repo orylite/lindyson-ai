@@ -25,7 +25,12 @@ function escapeHtml(value: string) {
 
 /** 读取正式站点的公示配置；不存在 publicCompliance.local.json 时回退到仓库模板。 */
 function loadPublicCompliance(): PublicComplianceConfig {
-  if (!existsSync(localPublicCompliancePath)) return PUBLIC_COMPLIANCE
+  if (!existsSync(localPublicCompliancePath)) {
+    if (process.env.NODE_ENV === 'production' || process.argv.includes('build')) {
+      console.warn('[lindyson] 未找到 src/app/data/publicCompliance.local.json，页脚与法律文案将使用占位模板；正式站点请先创建该文件。')
+    }
+    return PUBLIC_COMPLIANCE
+  }
   return JSON.parse(readFileSync(localPublicCompliancePath, 'utf8')) as PublicComplianceConfig
 }
 

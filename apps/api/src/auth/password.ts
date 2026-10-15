@@ -5,7 +5,7 @@ const PASSWORD_ROUNDS = 12;
 
 export const passwordSchema = z.string()
   .min(8)
-  .max(32)
+  .max(128)
   .regex(/[A-Za-z]/)
   .regex(/[0-9]/)
   .refine(value => !/\s/.test(value));

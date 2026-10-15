@@ -79,7 +79,7 @@ export function ResetPasswordPage({ onResetPassword, onNavigate }: ResetPassword
               placeholder="请输入新密码"
               icon={<Lock className="h-4 w-4" />}
               autoComplete="new-password"
-              hint="8-32 位，需包含字母和数字，不允许空格"
+              hint="8-128 位，需包含字母和数字，不允许空格"
             />
             <Input
               label="确认新密码"

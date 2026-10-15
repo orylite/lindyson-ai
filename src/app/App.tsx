@@ -61,6 +61,7 @@ export default function App() {
     updateAccount,
     changeAccountPassword,
     logoutAccount,
+    logoutAllDevices,
     plans,
     announcements,
     adminAnnouncements,
@@ -351,7 +352,7 @@ export default function App() {
       case 'tiktok-accounts':
         return canUseTikTokAccounts ? <TikTokAccounts /> : <FeatureUpgradeNotice />;
       case 'account-center':
-        return <AccountCenter account={account} transactions={userCreditLedger} transactionFilter={ledgerFilter} transactionPagination={ledgerPagination} transactionLoading={ledgerPageLoading} onTransactionFilterChange={setLedgerFilter} onTransactionPageNavigate={navigateLedgerPage} activeSection={accountCenterSection} onSectionChange={setAccountCenterSection} onOrderHistoryLoad={loadOrderHistory} onGenerationJobDetailLoad={loadGenerationJob} onAccountChange={updateAccount} onPasswordChange={changeAccountPassword} onLogout={logoutAccount} onNavigate={setActiveTab} onAdminOpen={() => navigateToPath('/admin')} />;
+        return <AccountCenter account={account} transactions={userCreditLedger} transactionFilter={ledgerFilter} transactionPagination={ledgerPagination} transactionLoading={ledgerPageLoading} onTransactionFilterChange={setLedgerFilter} onTransactionPageNavigate={navigateLedgerPage} activeSection={accountCenterSection} onSectionChange={setAccountCenterSection} onOrderHistoryLoad={loadOrderHistory} onGenerationJobDetailLoad={loadGenerationJob} onAccountChange={updateAccount} onPasswordChange={changeAccountPassword} onLogout={logoutAccount} onLogoutAllDevices={logoutAllDevices} onNavigate={setActiveTab} onAdminOpen={() => navigateToPath('/admin')} />;
       case 'subscription':
         return <Subscription plans={plans} currentPlanCode={account.hasActiveSubscription ? account.planCode : null} onOrderHistory={() => openAccountCenter('orders')} onCreatePayment={createPayment} paymentMonitorStatus={paymentMonitorStatus} onStartPaymentMonitor={startPaymentMonitor} onStopPaymentMonitor={stopPaymentMonitor} onCancelPaymentOrder={cancelPaymentOrder} onPaymentPaid={presentPaymentSuccess} />;
       default:
