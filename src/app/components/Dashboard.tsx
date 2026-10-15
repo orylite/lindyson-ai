@@ -107,8 +107,9 @@ export function Dashboard({ announcements, generationJobs, assets, authorizedTik
     catch (error) { setPreviewError(error instanceof Error ? error.message : '素材预览加载失败，请再次点击作品重试'); }
     finally { setLoadingProjectId(null); }
   };
-  const selectChartDay = (state: { activeLabel?: string } | null) => {
-    if (state?.activeLabel) setSelectedDay(state.activeLabel);
+  // recharts 3 起 activeLabel 可能是数字；本图 X 轴 dataKey 是日期字符串，统一转成字符串比较。
+  const selectChartDay = (state: { activeLabel?: string | number } | null) => {
+    if (state?.activeLabel !== undefined && state.activeLabel !== null && state.activeLabel !== '') setSelectedDay(String(state.activeLabel));
   };
 
   return (

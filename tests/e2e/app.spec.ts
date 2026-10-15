@@ -13750,7 +13750,11 @@ test('用户端趋势放大为实线且支持悬停和键盘，零数据与加�
   await expect(page.getByLabel('查看日期数据')).toHaveCount(0);
   await expect(chart).toHaveCSS('height', '304px');
   await expect(trendValue).toHaveCSS('position', 'absolute');
-  await expect(trendValue).toHaveCSS('clip', 'rect(0px, 0px, 0px, 0px)');
+  // Tailwind 4.3 起 sr-only 用 clip-path: inset(50%) 代替已废弃的 clip；只断言“视觉隐藏”这一结果。
+  await expect(trendValue).toHaveCSS('width', '1px');
+  await expect(trendValue).toHaveCSS('height', '1px');
+  await expect(trendValue).toHaveCSS('overflow', 'hidden');
+  await expect(trendValue).toHaveCSS('clip-path', 'inset(50%)');
   await expect(page.getByLabel('图表图例')).toHaveText('● AI视频● AI图片');
   await expect(chart.locator('.recharts-area-curve')).toHaveCount(2);
   await expect(chart.locator('.recharts-reference-line-line')).toHaveCount(1);
@@ -13777,10 +13781,15 @@ test('用户端趋势放大为实线且支持悬停和键盘，零数据与加�
   await page.getByRole('tab', { name: '近7日', exact: true }).click();
   await expect(trendValue).toContainText('7月17日');
 
-  const firstDateBox = await chart.locator('.recharts-xAxis .recharts-cartesian-axis-tick').first().boundingBox();
+  // recharts 3 把刻度文字渲染在 .recharts-xAxis 之外的独立图层（class 含 xAxis-tick-labels），取第一个标签文字的位置。
+  const firstDateLabel = chart.locator('[class*="xAxis-tick-labels"] .recharts-cartesian-axis-tick-value').first();
+  await expect(firstDateLabel).toHaveText('7月11日');
+  const firstDateBox = await firstDateLabel.boundingBox();
   const chartBox = await chart.boundingBox();
   if (!firstDateBox || !chartBox) throw new Error('趋势图未完成布局');
-  await page.mouse.move(firstDateBox.x + firstDateBox.width / 2, chartBox.y + chartBox.height / 2);
+  // recharts 3 的 Tooltip 按 hover 触发：先进入图表再分步移动，确保触发 mouseenter 与 mousemove。
+  await chart.hover({ position: { x: chartBox.width / 2, y: chartBox.height / 2 } });
+  await page.mouse.move(firstDateBox.x + firstDateBox.width / 2, chartBox.y + chartBox.height / 2, { steps: 8 });
   const tooltip = chart.locator('.recharts-tooltip-wrapper');
   await expect(tooltip).toBeVisible();
   await expect(tooltip).toContainText('7月11日');
