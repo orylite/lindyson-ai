@@ -2,7 +2,7 @@ import { registerReferralRoutes } from './routes/referralRoutes.js';
 import cors from '@fastify/cors';
 import formbody from '@fastify/formbody';
 import jwt from '@fastify/jwt';
-import fastify, { type FastifyInstance } from 'fastify';
+import fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import {
   hasZodFastifySchemaValidationErrors,
   isResponseSerializationError,
@@ -53,7 +53,8 @@ export function buildApp() {
         },
       },
     },
-    trustProxy: env.TRUST_PROXY,
+    // TRUST_PROXY 可能是布尔、跳数或地址列表，统一收敛到 Fastify 的 trustProxy 类型，避免联合类型让重载选择失败。
+    trustProxy: env.TRUST_PROXY as FastifyServerOptions['trustProxy'],
   });
 
   app.setValidatorCompiler(validatorCompiler);

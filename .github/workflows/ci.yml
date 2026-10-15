@@ -24,6 +24,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: 依赖漏洞审计
+        run: npm audit --audit-level=high
       - name: 契约包
         run: npm run check:contracts
       - name: 前端类型检查

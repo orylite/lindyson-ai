@@ -26,5 +26,8 @@ RUN npm ci --workspace apps/api --workspace packages/api-contracts --include-wor
 COPY --from=build /app/packages/api-contracts/dist packages/api-contracts/dist
 COPY --from=build /app/apps/api/dist apps/api/dist
 COPY apps/api/migrations apps/api/migrations
+# 以非 root 运行：本地存储目录预先创建并交给 node 用户，compose 挂载命名卷时会继承该属主。
+RUN mkdir -p /app/storage && chown -R node:node /app
+USER node
 EXPOSE 4300
 CMD ["npm", "--workspace", "apps/api", "run", "start"]

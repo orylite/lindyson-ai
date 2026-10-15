@@ -147,7 +147,8 @@ export function createMcpOAuthProvider() {
       ctx.body = '授权失败或已过期，请返回 ChatGPT 或 Codex 重新连接。';
     },
   });
-  provider.proxy = env.TRUST_PROXY;
+  // oidc-provider 只认布尔；跳数或地址列表的精细判断已由 Fastify 在 request.ip / protocol 上完成。
+  provider.proxy = env.TRUST_PROXY !== false;
   provider.on('server_error', () =>
     console.error(JSON.stringify({ event: 'mcp-oauth-error', code: 'MCP_OAUTH_ERROR' })),
   );

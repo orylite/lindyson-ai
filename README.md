@@ -36,7 +36,7 @@
 
 ## 快速开始
 
-前置条件：Node.js 26、Docker。没有火山引擎账号也能跑通全流程，`ENABLE_FAKE_PROVIDER=true` 时 worker 会用假供应商生成占位结果。
+前置条件：Node.js 22 或更新、Docker。没有火山引擎账号也能跑通全流程，`ENABLE_FAKE_PROVIDER=true` 时 worker 会用假供应商生成占位结果。
 
 ```bash
 npm i
@@ -79,7 +79,7 @@ npm run dev
 
 - **供应商**：`ARK_API_KEY` 与各模型 ID 用于视频和图片生成；`TOS_*` 用于对象存储，本地开发可用 `STORAGE_DRIVER=local`。
 - **安全**：`JWT_SECRET`、`MCP_OAUTH_SECRET`、`MCP_FILE_ENCRYPTION_KEY`、`REAL_PORTRAIT_TOKEN_ENCRYPTION_KEY`、`PAYMENT_CONFIG_ENCRYPTION_KEY` 必须是强随机值；生产环境会拒绝已知的弱默认值。
-- **反向代理**：API 只应监听本机，公网经反向代理进入。`TRUST_PROXY=true` 时请确保代理会覆盖 `X-Forwarded-For`，否则客户端可伪造来源 IP。
+- **反向代理**：API 只应监听本机，公网经反向代理进入。`TRUST_PROXY` 填反向代理的地址或 CIDR（例如 `127.0.0.1,::1`）或跳数；不要在 API 端口可直连时设为 `true`，否则客户端可伪造来源 IP 绕过限流。
 - **前端构建期变量**（`VITE_` 前缀，可写在 `.env.local`）：`VITE_PUBLIC_SITE_URL` 是正式站点地址，用于 canonical 和社交分享；`VITE_SUPPORT_QR_URL` 是客服二维码图片地址，留空则不显示。`VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL` 指向 Seedream 教程演示媒体所在目录，这些媒体是火山引擎官方素材，不随仓库分发，留空则弹窗只显示文字与官方链接。
 - **运营主体与备案公示**：页脚和法律文案读取 `src/app/data/publicCompliance.json`。仓库里的是占位模板，正式站点把真实信息写到同目录的 `publicCompliance.local.json`（已被 git 忽略），构建时自动替换；`npm run check:public-compliance` 校验该文件是否完整。
 - `public/robots.txt` 与 `public/sitemap.xml` 里的域名需要按自己的站点修改。

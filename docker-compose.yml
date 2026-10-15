@@ -161,7 +161,8 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "${API_HOST_PORT:-4300}:4300"
+      # 只绑定本机回环地址；公网流量应经反向代理进入，避免直连伪造 X-Forwarded-For。
+      - "${API_HOST_BIND:-127.0.0.1}:${API_HOST_PORT:-4300}:4300"
     volumes:
       - local-storage:/app/storage
     command: ["npm", "--workspace", "apps/api", "run", "start"]
