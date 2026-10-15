@@ -21,5 +21,5 @@
 - `JWT_SECRET`、`MCP_OAUTH_SECRET`、`MCP_FILE_ENCRYPTION_KEY`、`REAL_PORTRAIT_TOKEN_ENCRYPTION_KEY`、`PAYMENT_CONFIG_ENCRYPTION_KEY` 必须是强随机值，不要用示例值。
 - API 只监听本机回环地址，通过反向代理暴露；`TRUST_PROXY` 只填反向代理的地址/CIDR 或跳数，API 端口可直连时不要设为 `true`。
 - 容器镜像以非 root 用户 `node` 运行，不要在部署时改回 root。
-- 使用 `docker-compose.yml` 对外部署时，务必设置 `POSTGRES_PASSWORD`，不要沿用本地默认口令。
+- 用 `docker-compose.yml` 部署时务必设置 `POSTGRES_PASSWORD`；公网只开放 web 的端口，API 端口只绑定本机。
 - 不要把 `.env`、`publicCompliance.local.json` 或任何密钥提交到版本库。

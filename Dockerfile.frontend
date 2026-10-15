@@ -1,7 +1,13 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 ARG APP_RELEASE_ID=""
-ENV APP_RELEASE_ID=${APP_RELEASE_ID}
+ARG VITE_PUBLIC_SITE_URL=""
+ARG VITE_SUPPORT_QR_URL=""
+ARG VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL=""
+ENV APP_RELEASE_ID=${APP_RELEASE_ID} \
+    VITE_PUBLIC_SITE_URL=${VITE_PUBLIC_SITE_URL} \
+    VITE_SUPPORT_QR_URL=${VITE_SUPPORT_QR_URL} \
+    VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL=${VITE_SEEDREAM_TUTORIAL_MEDIA_BASE_URL}
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY packages/api-contracts/package.json packages/api-contracts/package.json

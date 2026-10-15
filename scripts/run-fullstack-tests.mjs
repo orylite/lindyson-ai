@@ -15,10 +15,13 @@ const lockOwnerPath = join(lockDirectory, 'owner.json');
 const env = {
   ...process.env,
   FULLSTACK_COMPOSE_PROJECT: project,
-  FULLSTACK_FRONTEND_IMAGE: `${project}-frontend:local`,
-  // 全栈浏览器经 nginx 访问 API；独立宿主端口避免与并行的发布候选栈争用 4300。
+  // 单机栈 + 测试叠加（mock 供应商、CN 第二入口）；spec 里的 docker compose 调用继承此变量。
+  COMPOSE_FILE: 'docker-compose.yml:docker-compose.fullstack.yml',
+  WEB_IMAGE: `${project}-frontend:local`,
+  WEB_HTTP_PORT: '8080',
+  WEB_CN_HTTP_PORT: '8081',
+  // 全栈浏览器经 web 容器访问 API；独立宿主端口避免与并行的发布候选栈争用 4300。
   API_HOST_PORT: process.env.FULLSTACK_API_HOST_PORT ?? '14300',
-  COMPOSE_PROFILES: 'fullstack',
   NODE_ENV: 'test',
   JWT_SECRET: 'Integration-R5L9hKx7-mQ2pV8z-N4cT6wY1sD3fG0jB',
   CORS_ORIGIN: [
