@@ -4,6 +4,10 @@
 
 ## [未发布]
 
+### 待办
+
+- e2e「用户管理按 userId 隔离历史订单和积分流水」在 GitHub runner 上稳定失败（翻页时序），已在 CI 隔离，本机正常；待根据 CI 上传的 trace 定位。
+
 ### 新增
 
 - 首个开源版本：Vite + React 前端、Fastify API 与 BullMQ worker、api-contracts 契约包、89 个数据库迁移、Playwright 端到端与 Docker 全栈测试、MCP 服务端与 OAuth 2.1 接入。
