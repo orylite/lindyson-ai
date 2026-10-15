@@ -7,6 +7,7 @@ import { expectedPublicSiteUrl,loadPublicComplianceForTests,loadViteEnvForTests 
 const PUBLIC_COMPLIANCE_FOR_TESTS = loadPublicComplianceForTests();
 const PUBLIC_COMPLIANCE_COMPANY_NAME = PUBLIC_COMPLIANCE_FOR_TESTS.companyName;
 const PUBLIC_COMPLIANCE_ICP_LABEL = PUBLIC_COMPLIANCE_FOR_TESTS.registrations.icp?.label ?? '';
+const LEGAL_EFFECTIVE_DATE_FOR_TESTS = PUBLIC_COMPLIANCE_FOR_TESTS.legal.effectiveDate;
 const VITE_ENV_FOR_TESTS = loadViteEnvForTests();
 const SUPPORT_QR_CONFIGURED = Boolean(VITE_ENV_FOR_TESTS.VITE_SUPPORT_QR_URL?.trim());
 const PUBLIC_SITE_URL_FOR_TESTS = expectedPublicSiteUrl(VITE_ENV_FOR_TESTS);
@@ -5917,7 +5918,7 @@ test('首页底部法律页面入口可用', async ({ page }) => {
   await expect(page).toHaveURL(/\/terms$/);
   await expectPageMetadata(page, ROUTE_PAGE_METADATA['/terms']);
   await expect(page.getByRole('heading', { name: 'Lindyson AI 服务条款' })).toBeVisible();
-  await expect(page.getByText('生效日期：2026 年 7 月 30 日')).toBeVisible();
+  await expect(page.getByText(`生效日期：${LEGAL_EFFECTIVE_DATE_FOR_TESTS}`)).toBeVisible();
   await page.getByRole('button', { name: '返回首页' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expectPageMetadata(page, ROUTE_PAGE_METADATA['/']);
@@ -5926,7 +5927,7 @@ test('首页底部法律页面入口可用', async ({ page }) => {
   await expect(page).toHaveURL(/\/policy$/);
   await expectPageMetadata(page, ROUTE_PAGE_METADATA['/policy']);
   await expect(page.getByRole('heading', { name: 'Lindyson AI 隐私政策' })).toBeVisible();
-  await expect(page.getByText('生效日期：2026 年 7 月 30 日')).toBeVisible();
+  await expect(page.getByText(`生效日期：${LEGAL_EFFECTIVE_DATE_FOR_TESTS}`)).toBeVisible();
   await page.getByRole('button', { name: '返回首页' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expectPageMetadata(page, ROUTE_PAGE_METADATA['/']);
@@ -10728,7 +10729,8 @@ test('用户端 AI Studio、联系客服和数字资产关键交互可用', asyn
 
   await page.getByRole('button', { name: /联系客服/ }).click();
   await expect(page.getByRole('heading', { name: '联系客服' })).toBeVisible();
-  await expect(page.getByText('Lindyson AI 客服')).toBeVisible();
+  if (SUPPORT_QR_CONFIGURED) await expect(page.getByText('Lindyson AI 客服')).toBeVisible();
+  else await expect(page.getByText('Lindyson AI 客服')).toHaveCount(0);
   await page.getByRole('tab', { name: '提交问题' }).click();
   await page.getByLabel('问题标题').fill('生成问题咨询');
   await page.getByLabel('问题描述').fill('生成任务状态需要人工协助确认。');
@@ -13290,8 +13292,9 @@ test('管理后台生成任务成功资产可直接预览', async ({ page }, tes
       window.__assetDownloadNames.push(this.download);
     };
   });
+  // 用仓库自带的首页成片做可播放的预览源；教程媒体不随仓库分发，CI 上不存在。
   const brandPreviewUrl = new URL(
-    '/tutorials/seedream-interactive-editing.mp4',
+    '/landing/beauty-campaign.mp4',
     String(testInfo.project.use.baseURL),
   ).toString();
   const longPrompt = Array.from({ length: 18 }, (_, index) => (
