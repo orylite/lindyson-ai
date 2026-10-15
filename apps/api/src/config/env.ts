@@ -62,6 +62,8 @@ const envSchema = z.object({
   HOST: z.string().default('0.0.0.0'),
   PORT: z.coerce.number().int().positive().default(4300),
   TRUST_PROXY: trustProxySetting.default(false),
+  // 全局限流：每个来源 IP 每分钟允许的请求数，0 表示关闭。
+  RATE_LIMIT_MAX: z.coerce.number().int().nonnegative().default(600),
   DATABASE_URL: z.string().url().default('postgres://lindyson:lindyson@localhost:5432/lindyson'),
   REDIS_URL: z.string().url().default('redis://localhost:6379'),
   JWT_SECRET: z.string().min(16).default(DEVELOPMENT_JWT_SECRET),
