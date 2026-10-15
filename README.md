@@ -430,6 +430,17 @@ flowchart LR
 
 ---
 
+## 📮 联系与交流
+
+用的时候遇到问题，开 [Issue](https://github.com/orylite/lindyson-ai/issues) 就好。想聊商业化、私有部署、接别的模型，或者只是想交流做 TK 短视频的经验，扫码加飞书：
+
+<p align="center">
+  <img src="docs/readme-assets/feishu-qr.png" alt="飞书联系二维码" width="200"><br>
+  <sub>飞书扫一扫</sub>
+</p>
+
+---
+
 ## ⭐ Star History
 
 觉得有用的话，点个 Star 让更多卖家和开发者看到它。
