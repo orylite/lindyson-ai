@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.demo
 node_modules/
 dist/
 apps/api/dist/
