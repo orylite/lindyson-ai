@@ -176,7 +176,9 @@ export async function runArkSeedanceProvider(input: ProviderTaskInput): Promise<
       : {
           submissionDisposition: providerTaskId
             ? 'created'
-            : (providerSubmissionStarted ? 'unknown' : undefined),
+            : (providerSubmissionStarted
+                ? (isConnectPhaseNetworkError(error) ? 'not-created' : 'unknown')
+                : undefined),
     };
     return providerFailure(
       classifySeedanceProviderError(message, providerErrorCode),
@@ -1046,11 +1048,34 @@ function providerFailure(
 
 /**
  * 4xx 通常是创建请求被权威拒绝，但 408、425 和代理常用的 499 不能证明上游
- * 没有创建任务。所有 5xx、网络中断和超时也必须保守地视为结果未知。
+ * 没有创建任务。所有 5xx、建连后的网络中断和超时也必须保守地视为结果未知；
+ * 建连前失败见 isConnectPhaseNetworkError。
  */
 export function classifyArkSubmissionDisposition(status: number): ArkSubmissionDisposition {
   if (status >= 400 && status < 500 && ![408, 425, 499].includes(status)) return 'not-created';
   return 'unknown';
+}
+
+// 只有 DNS 解析或 TCP 建连阶段的失败能证明请求从未发出；
+// 连接建立后的重置、读超时等仍可能已被上游接收，必须保持结果未知。
+const CONNECT_PHASE_ERROR_CODES = new Set(['UND_ERR_CONNECT_TIMEOUT', 'ENOTFOUND', 'EAI_AGAIN', 'ECONNREFUSED']);
+const CONNECT_PHASE_SYSCALLS = new Set(['connect', 'getaddrinfo']);
+
+/** fetch 抛出的 TypeError('fetch failed') 的 cause 是否为建连前失败（含 IPv4/IPv6 自动选择的聚合错误）。 */
+export function isConnectPhaseNetworkError(error: unknown): boolean {
+  if (!(error instanceof TypeError)) return false;
+  const cause = error.cause;
+  if (!cause || typeof cause !== 'object') return false;
+  const inner = (cause as { errors?: unknown }).errors;
+  if (Array.isArray(inner) && inner.length > 0) return inner.every(isConnectPhaseSocketError);
+  return isConnectPhaseSocketError(cause);
+}
+
+function isConnectPhaseSocketError(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const { code, syscall } = value as { code?: unknown; syscall?: unknown };
+  if (typeof code === 'string' && CONNECT_PHASE_ERROR_CODES.has(code)) return true;
+  return typeof code === 'string' && typeof syscall === 'string' && CONNECT_PHASE_SYSCALLS.has(syscall);
 }
 
 export function classifySeedanceProviderError(

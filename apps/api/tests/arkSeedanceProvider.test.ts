@@ -26,6 +26,7 @@ import {
   buildSeedanceProviderFailure,
   buildSeedanceTaskPayload,
   classifyArkSubmissionDisposition,
+  isConnectPhaseNetworkError,
   classifySeedanceProviderError,
   extractReferenceAssetUrls,
   extractReferenceImageUrls,
@@ -229,7 +230,7 @@ describe('arkSeedanceProvider', () => {
     }
   });
 
-  it.each(['ECONNRESET', 'UND_ERR_CONNECT_TIMEOUT', 'ENOTFOUND', 'secret=https://example.test?token=private'])('提交网络异常保留安全诊断且不重复提交：%s', async code => {
+  it.each(['ECONNRESET', 'ETIMEDOUT', 'UND_ERR_SOCKET', 'secret=https://example.test?token=private'])('提交网络异常保留安全诊断且不重复提交：%s', async code => {
     const fetchMock = vi.fn().mockRejectedValue(new TypeError('fetch failed', {
       cause: Object.assign(new Error('private signed URL'), { code }),
     }));
@@ -250,6 +251,50 @@ describe('arkSeedanceProvider', () => {
     } finally {
       vi.unstubAllGlobals();
     }
+  });
+
+  it.each([
+    ['UND_ERR_CONNECT_TIMEOUT', Object.assign(new Error('connect timeout'), { code: 'UND_ERR_CONNECT_TIMEOUT' })],
+    ['ENOTFOUND', Object.assign(new Error('dns'), { code: 'ENOTFOUND', syscall: 'getaddrinfo' })],
+    ['ECONNREFUSED', Object.assign(new Error('refused'), { code: 'ECONNREFUSED' })],
+    ['ETIMEDOUT connect', Object.assign(new Error('connect ETIMEDOUT'), { code: 'ETIMEDOUT', syscall: 'connect' })],
+    ['双栈自动选择全部失败', Object.assign(new AggregateError([
+      Object.assign(new Error('v4'), { code: 'ETIMEDOUT', syscall: 'connect' }),
+      Object.assign(new Error('v6'), { code: 'ENETUNREACH', syscall: 'connect' }),
+    ]), { code: 'ETIMEDOUT' })],
+  ])('建连前网络失败判为未创建且不计费，可直接退款：%s', async (_label, cause) => {
+    const fetchMock = vi.fn().mockRejectedValue(new TypeError('fetch failed', { cause }));
+    vi.stubGlobal('fetch', fetchMock);
+    try {
+      const result = await runArkSeedanceProvider({
+        taskId: 'task-connect-failed', userId: 'user-1', kind: 'video',
+        model: 'Seedance 2.5', prompt: '生成产品展示视频', credits: 320,
+        config: { aspectRatio: '9:16', resolution: '720p', durationSeconds: 5 },
+        onProviderSubmissionStarted: async () => undefined,
+      });
+      expect(result).toMatchObject({
+        ok: false,
+        submissionDisposition: 'not-created',
+        billingDisposition: 'unbilled',
+        providerStatus: 'not-created',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('只有部分地址在建连阶段失败时不能判为未创建', () => {
+    expect(isConnectPhaseNetworkError(new TypeError('fetch failed', {
+      cause: new AggregateError([
+        Object.assign(new Error('v4'), { code: 'ECONNRESET', syscall: 'read' }),
+        Object.assign(new Error('v6'), { code: 'ENETUNREACH', syscall: 'connect' }),
+      ]),
+    }))).toBe(false);
+    expect(isConnectPhaseNetworkError(new TypeError('fetch failed', {
+      cause: Object.assign(new Error('reset'), { code: 'ECONNRESET', syscall: 'read' }),
+    }))).toBe(false);
+    expect(isConnectPhaseNetworkError(Object.assign(new Error('x'), { code: 'ECONNREFUSED' }))).toBe(false);
   });
 
   it('创建接口成功响应缺少 task id 时仍保守进入提交结果未知', async () => {

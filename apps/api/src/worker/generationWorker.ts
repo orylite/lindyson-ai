@@ -2,6 +2,7 @@ import { Worker } from 'bullmq';
 import type { QueryResult } from 'pg';
 import { pathToFileURL } from 'node:url';
 import { env } from '../config/env.js';
+import { configureOutboundNetworkDefaults } from '../config/networkDefaults.js';
 import { pool, withTransaction } from '../db/pool.js';
 import { cleanupExpiredAdminIdempotency } from '../domain/adminIdempotency.js';
 import { runDailyAssetRetentionSweep } from '../domain/assetRetentionService.js';
@@ -948,6 +949,7 @@ export async function main(runtime: GenerationWorkerMainRuntime = {}) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  configureOutboundNetworkDefaults();
   main().catch(error => {
     try {
       logWorkerFailure('generation-worker-aborted', error);
