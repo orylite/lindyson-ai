@@ -454,11 +454,16 @@ flowchart LR
 
 ## 📮 联系与交流
 
-用的时候遇到问题，开 [Issue](https://github.com/orylite/lindyson-ai/issues) 就好。想聊商业化、私有部署、接别的模型，或者只是想交流做 TK 短视频的经验，扫码加飞书：
+用的时候遇到问题，开 [Issue](https://github.com/orylite/lindyson-ai/issues) 就好。想聊商业化、私有部署、接别的模型，或者只是想交流做 TK 短视频的经验，扫码加飞书，或者在 Telegram 上找我们：
 
 <p align="center">
   <img src="docs/readme-assets/feishu-qr.png" alt="飞书联系二维码" width="200"><br>
   <sub>飞书扫一扫</sub>
+</p>
+
+<p align="center">
+  <a href="https://t.me/JunoZDEV"><img src="https://img.shields.io/badge/Telegram-@JunoZDEV-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram @JunoZDEV"></a><br>
+  <sub>海外的朋友也可以直接在 Telegram 上找我们</sub>
 </p>
 
 ---

@@ -455,11 +455,16 @@ Contribution flow is in [CONTRIBUTING.md](CONTRIBUTING.md), security issues go p
 
 ## 📮 Contact
 
-If something breaks, open an [issue](https://github.com/orylite/lindyson-ai/issues). To talk about commercial use, private deployment, plugging in other models, or just to swap notes on TikTok short video, scan the Feishu (Lark) code:
+If something breaks, open an [issue](https://github.com/orylite/lindyson-ai/issues). To talk about commercial use, private deployment, plugging in other models, or just to swap notes on TikTok short video, scan the Feishu (Lark) code or reach us on Telegram:
 
 <p align="center">
   <img src="docs/readme-assets/feishu-qr.png" alt="Feishu contact QR code" width="200"><br>
   <sub>Scan with Feishu / Lark</sub>
+</p>
+
+<p align="center">
+  <a href="https://t.me/JunoZDEV"><img src="https://img.shields.io/badge/Telegram-@JunoZDEV-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram @JunoZDEV"></a><br>
+  <sub>Or message us on Telegram</sub>
 </p>
 
 ---
