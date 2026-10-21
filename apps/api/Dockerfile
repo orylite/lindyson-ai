@@ -1,4 +1,4 @@
-FROM node:22-alpine AS deps
+FROM node:22.23.4-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
@@ -15,7 +15,7 @@ RUN npm --workspace packages/api-contracts run build \
     --outfile=apps/api/dist/tools/importProviderOperationalUsage.bundle.mjs \
   && node --check apps/api/dist/tools/importProviderOperationalUsage.bundle.mjs
 
-FROM node:22-alpine AS runtime
+FROM node:22.23.4-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 RUN apk add --no-cache ffmpeg
