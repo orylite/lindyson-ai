@@ -62,7 +62,7 @@
     "@vitejs/plugin-react": "4.7.0",
     "tailwindcss": "4.3.3",
     "typescript": "^6.0.3",
-    "vite": "^6.4.3",
+    "vite": "^6.4.5",
     "vitest": "^4.1.9"
   }
 }
