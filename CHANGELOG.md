@@ -10,6 +10,11 @@
 - 首页「开始创作 / 登录」跳转到 `/login` 时保留查询参数；此前从首页进入会丢失邀约码 `?ref=`。
 - 访客来源（不论是否注册）：首页与登录页到站时用浏览器匿名访客编号上报一次来源（`POST /api/public/visits`，sendBeacon），同一访客同一天（北京时间）同一来源只记一次，新表 `visitor_visits`（迁移 092）。接口单独限流每 IP 每分钟 10 次，爬虫与脚本 UA 不入库，不保存 IP 与 UA。明细默认保留 180 天（`VISITOR_VISITS_RETENTION_DAYS`），worker 每天清理。仪表盘「注册来源分布」改为「流量来源」：今日 / 近 7 天 / 本月的访客、新访客、注册、注册转化、付费与收入。邀约链接 `?ref=` 在没有推广参数时归为「邀约」来源。
 
+### 安全
+
+- zod 从 3 升到 4.6.7，修复超大数组校验耗尽内存（GHSA-mrhx-c7xc-m3w5）；`fastify-type-provider-zod` 升到 7.0.0，去掉不支持 zod 4 的 `zod-to-json-schema`，MCP 工具的输入描述改用 zod 自带的 `z.toJSONSchema`（判别联合仍输出 `anyOf`）。请求校验失败时返回的 `issues` 格式不变。
+- fastify 5.12.5 → 5.12.8（请求头校验绕过）；fast-uri、hono 升到修复版；`@modelcontextprotocol/node` 2.1.2、`@modelcontextprotocol/server` 2.4.0，`@hono/node-server` 升到 2.1.11。
+
 ### 待办
 
 - e2e「用户管理按 userId 隔离历史订单和积分流水」在 GitHub runner 上稳定失败（翻页时序），已在 CI 隔离，本机正常；待根据 CI 上传的 trace 定位。

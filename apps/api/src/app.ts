@@ -264,16 +264,30 @@ function responseValidationLogContext(error: unknown) {
 function normalizeRequestValidationIssue(value: unknown) {
   const item = isRecord(value) ? value : {};
   const params = isRecord(item.params) ? item.params : {};
+  // 旧版类型提供器把 zod 原始问题放在 params.issue；7.x 起改为 keyword + instancePath（JSON 指针）。
   const issue = isRecord(params.issue) ? params.issue : {};
+  const code = typeof issue.code === 'string'
+    ? issue.code
+    : typeof item.keyword === 'string' ? item.keyword : 'custom';
+  const path = Array.isArray(issue.path)
+    ? issue.path.filter(segment => typeof segment === 'string' || typeof segment === 'number')
+    : typeof item.instancePath === 'string' ? jsonPointerToPath(item.instancePath) : [];
   return {
-    code: typeof issue.code === 'string' ? issue.code : 'custom',
-    path: Array.isArray(issue.path)
-      ? issue.path.filter(segment => typeof segment === 'string' || typeof segment === 'number')
-      : [],
+    code,
+    path,
     message: typeof issue.message === 'string'
       ? issue.message
       : typeof item.message === 'string' ? item.message : '请求参数不正确',
   };
+}
+
+/** 把 "/requests/0/prompt" 还原成 ['requests', 0, 'prompt']，与 zod 问题路径一致。 */
+function jsonPointerToPath(pointer: string): Array<string | number> {
+  return pointer
+    .split('/')
+    .filter(segment => segment !== '')
+    .map(segment => segment.replace(/~1/g, '/').replace(/~0/g, '~'))
+    .map(segment => (/^(0|[1-9]\d*)$/.test(segment) ? Number(segment) : segment));
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

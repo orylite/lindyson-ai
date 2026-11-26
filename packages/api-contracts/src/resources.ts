@@ -2486,7 +2486,7 @@ export interface GenerationCreditSnapshotDto {
   creditStatus: z.infer<typeof creditSettlementStatusSchema>;
 }
 
-export const generationCreditSnapshotSchema: z.ZodType<GenerationCreditSnapshotDto> = z.object({
+export const generationCreditSnapshotSchema: z.ZodType<GenerationCreditSnapshotDto, GenerationCreditSnapshotDto> = z.object({
   attempt: nonnegativeIntegerSchema,
   model: z.string().min(1),
   durationSeconds: nonnegativeIntegerSchema.nullable(),
@@ -2548,14 +2548,12 @@ const userCreditLedgerObjectSchema = z.object({
 });
 
 export const userCreditLedgerSchema: z.ZodType<
-  UserCreditLedgerDto,
-  z.ZodTypeDef,
+  UserCreditLedgerDto, 
   UserCreditLedgerInput
 > = userCreditLedgerObjectSchema;
 
 export const adminCreditLedgerSchema: z.ZodType<
-  AdminCreditLedgerDto,
-  z.ZodTypeDef,
+  AdminCreditLedgerDto, 
   AdminCreditLedgerInput
 > = userCreditLedgerObjectSchema.extend({
   userId: uuidSchema,

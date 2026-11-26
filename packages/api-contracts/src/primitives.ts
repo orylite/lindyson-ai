@@ -11,10 +11,10 @@ export const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() => z.union([
   z.number().finite(),
   z.string(),
   z.array(jsonValueSchema),
-  z.record(jsonValueSchema),
+  z.record(z.string(), jsonValueSchema),
 ]));
 
-export const jsonObjectSchema = z.record(jsonValueSchema);
+export const jsonObjectSchema = z.record(z.string(), jsonValueSchema);
 export const uuidSchema = z.string().uuid();
 export const nonemptyStringSchema = z.string().trim().min(1);
 export const emailSchema = z.string().trim().email().transform(value => value.toLowerCase());

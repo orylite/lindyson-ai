@@ -30,10 +30,10 @@ const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() => z.union([
   z.number().finite(),
   z.string(),
   z.array(jsonValueSchema),
-  z.record(jsonValueSchema),
+  z.record(z.string(), jsonValueSchema),
 ]));
 
-const jsonObjectSchema = z.record(jsonValueSchema).refine(
+const jsonObjectSchema = z.record(z.string(), jsonValueSchema).refine(
   value => Object.keys(value).length > 0,
   '证据对象不能为空',
 );

@@ -1,9 +1,9 @@
 import { createMcpHandler, fromJsonSchema, McpServer, type Tool } from '@modelcontextprotocol/server';
 import { toNodeHandler } from '@modelcontextprotocol/node';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 import { z } from 'zod';
 import {
   endpointContracts,
+  videoGenerationBatchRequestItemBaseSchema,
   idempotencyKeySchema,
   isoDateTimeSchema,
   uuidSchema,
@@ -37,6 +37,23 @@ import {
   type McpScope,
 } from './security.js';
 
+/** 给 MCP 客户端的输入描述：按输入端生成，内联所有子结构，不输出 $schema 声明。 */
+function toInputJsonSchema(schema: z.ZodType): Record<string, unknown> {
+  const { $schema: _ignored, ...rest } = z.toJSONSchema(schema, {
+    io: 'input',
+    unrepresentable: 'any',
+    reused: 'inline',
+    // 判别联合在 zod 4 默认输出 oneOf；OpenAI 工具参数对 anyOf 支持更稳，沿用原来的 anyOf。
+    override: ({ jsonSchema }) => {
+      if (Array.isArray(jsonSchema.oneOf)) {
+        jsonSchema.anyOf = jsonSchema.oneOf;
+        delete jsonSchema.oneOf;
+      }
+    },
+  }) as Record<string, unknown>;
+  return rest;
+}
+
 const empty = z.object({}).strict();
 const idInput = z.object({ id: uuidSchema }).strict();
 const pageInput = z
@@ -46,8 +63,7 @@ const pageInput = z
     kind: z.enum(['image', 'video', 'audio']).optional(),
   })
   .strict();
-const videoRequest = endpointContracts.generationBatchCreate.body.shape.requests.element
-  .innerType()
+const videoRequest = videoGenerationBatchRequestItemBaseSchema
   .omit({ realPortrait: true, promptWizardSource: true, tkPromptSource: true });
 const imageRequest = endpointContracts.imageGenerationBatchCreate.body.shape.requests.element;
 const requestArray = (kind: 'image' | 'video') =>
@@ -122,7 +138,7 @@ export function createLindysonMcpServer(identity: McpIdentity) {
     // 与 SDK 输入描述的归一化一致：联合对象仍需显式声明顶层 object，保留各分支约束。
     const inputSchema = {
       type: 'object',
-      ...zodToJsonSchema(input, { $refStrategy: 'none' }),
+      ...toInputJsonSchema(input),
     } as Tool['inputSchema'];
     const outputSchema = { type: 'object' as const, additionalProperties: true };
     const metadata = {
@@ -216,8 +232,8 @@ export function createLindysonMcpServer(identity: McpIdentity) {
           isVideoModelCapabilityAvailable(prices, item),
         ),
         prices: prices.filter((item) => item.available && item.credits > 0),
-        imageRequestSchema: zodToJsonSchema(imageRequest, { $refStrategy: 'none' }),
-        videoRequestSchema: zodToJsonSchema(videoRequest, { $refStrategy: 'none' }),
+        imageRequestSchema: toInputJsonSchema(imageRequest),
+        videoRequestSchema: toInputJsonSchema(videoRequest),
       };
     },
   );

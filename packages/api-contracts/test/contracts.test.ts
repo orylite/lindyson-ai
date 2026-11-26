@@ -1822,7 +1822,7 @@ describe('共享 API 契约', () => {
       ] as const) {
         if (!schema) continue;
         for (const objectSchema of unwrapObjects(schema)) {
-          expect(objectSchema._def.unknownKeys, `${name}.${location}`).toBe('strict');
+          expect(unknownKeysMode(objectSchema), `${name}.${location}`).toBe('strict');
         }
       }
     }
@@ -1836,7 +1836,7 @@ describe('共享 API 契约', () => {
         continue;
       }
       for (const objectSchema of unwrapObjects(endpoint.response)) {
-        expect(objectSchema._def.unknownKeys, `${name}.response`).toBe('strip');
+        expect(unknownKeysMode(objectSchema), `${name}.response`).toBe('strip');
       }
     }
   });
@@ -2450,19 +2450,27 @@ describe('共享 API 契约', () => {
   });
 });
 
-function unwrapObjects(schema: z.ZodTypeAny): z.AnyZodObject[] {
-  let current = schema;
-  while (current instanceof z.ZodEffects || current instanceof z.ZodDefault || current instanceof z.ZodOptional) {
-    current = current instanceof z.ZodEffects ? current.innerType() : current._def.innerType;
+// zod 4：refine/superRefine 不再包一层；transform 与 preprocess 是 ZodPipe，取输入端。
+function unwrapObjects(schema: z.ZodType): z.ZodObject[] {
+  let current: z.ZodType = schema;
+  while (current instanceof z.ZodPipe || current instanceof z.ZodDefault || current instanceof z.ZodOptional) {
+    current = (current instanceof z.ZodPipe ? current.in : current.unwrap()) as z.ZodType;
   }
   if (current instanceof z.ZodObject) return [current];
   if (current instanceof z.ZodDiscriminatedUnion) {
-    return current.options.flatMap((option: z.ZodTypeAny) => unwrapObjects(option));
+    return (current.options as z.ZodType[]).flatMap(option => unwrapObjects(option));
   }
   throw new Error(`契约根节点不是对象或判别联合：${current.constructor.name}`);
 }
 
-function unwrapObject(schema: z.ZodTypeAny): z.AnyZodObject {
+// zod 4 用 catchall 表达未知键策略：strict 为 never，strip 未设置，passthrough 为 unknown。
+function unknownKeysMode(schema: z.ZodObject): 'strict' | 'strip' | 'passthrough' {
+  const catchall = schema.def.catchall;
+  if (!catchall) return 'strip';
+  return catchall instanceof z.ZodNever ? 'strict' : 'passthrough';
+}
+
+function unwrapObject(schema: z.ZodType): z.ZodObject {
   const objects = unwrapObjects(schema);
   if (objects.length !== 1) throw new Error(`契约根节点包含 ${objects.length} 个对象分支`);
   return objects[0]!;

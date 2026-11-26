@@ -1,5 +1,6 @@
 import { randomInt } from 'node:crypto';
-import type { EndpointRequestQuery } from '@lindyson/api-contracts';
+import { endpointContracts } from '@lindyson/api-contracts';
+import type { z } from 'zod';
 import { pool, withReadOnlyRepeatableRead, type DbClient } from '../db/pool.js';
 import { setUserAvailableCreditsWithClient } from './financialCredits.js';
 import { toIsoDateTime } from './serialization.js';
@@ -155,7 +156,8 @@ const recordView = `SELECT r.*, u.email AS inviter_email, v.email AS invitee_ema
     bool_or(w.lot_id IS NULL) AS pending, bool_or(l.consumed_amount > w.reviewed_consumed) AS unreviewed,
     string_agg(DISTINCT w.review_note, '；') AS review_note
     FROM referral_rewards w LEFT JOIN credit_lots l ON l.id = w.lot_id WHERE w.referral_id = r.id) a ON true`;
-export async function listReferrals(query: EndpointRequestQuery<'adminReferrals'>, userId?: string) {
+// 调用方传入的是已解析的查询，按输出类型声明（zod 4 中 coerce 字段的输入类型为 unknown）。
+export async function listReferrals(query: z.output<typeof endpointContracts.adminReferrals.query>, userId?: string) {
   const { search, status, from, to } = query;
   const request = parseExactCursorPageRequest({ ...query, resource: 'referrals', filters: { userId: userId ?? null, search: search ?? null, status: status ?? null, from: from ?? null, to: to ?? null }, defaultLimit: 20, maxLimit: 50 });
   return withReadOnlyRepeatableRead(async client => {

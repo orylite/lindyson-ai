@@ -192,6 +192,23 @@ const userResponse = z.object({ user: userProfileSchema });
 const orderResponse = z.object({ order: orderSchema });
 const ticketResponse = z.object({ ticket: userTicketSchema });
 const adminTicketResponse = z.object({ ticket: adminTicketSchema });
+/**
+ * 视频批量生成单条请求的对象结构（不含跨字段校验）。
+ * zod 4 不允许在带 refine 的对象上 omit/pick，MCP 工具需要从这个基础对象裁剪字段。
+ */
+export const videoGenerationBatchRequestItemBaseSchema = z.object({
+  model: nonemptyStringSchema,
+  prompt: nonemptyStringSchema.max(4_000),
+  config: videoGenerationRequestConfigSchema,
+  references: z.array(generationReferenceInputSchema).max(50).default([]),
+  realPortrait: z.object({
+    actorId: uuidSchema,
+    portraitAssetId: uuidSchema.optional(),
+  }).strict().optional(),
+  promptWizardSource: promptWizardSourceSchema.optional(),
+  tkPromptSource: tkPromptSourceSchema.optional(),
+}).strict();
+
 const taskResponse = z.object({ task: userGenerationTaskSchema });
 const adminTaskResponse = z.object({ task: adminGenerationTaskSchema });
 const generationConsumptionSettingsResponseSchema: z.ZodType<{
@@ -199,7 +216,7 @@ const generationConsumptionSettingsResponseSchema: z.ZodType<{
   promptWizard: PromptWizardSettings;
   tkPromptEngine: TkPromptEngineSettings;
   videoModels: VideoModelCapabilityDto[];
-}, z.ZodTypeDef, any> = z.object({
+},  any> = z.object({
   items: z.array(consumptionSettingSchema),
   promptWizard: promptWizardSettingsSchema,
   // 兼容先部署前端/合同、后部署 API 的短暂窗口；缺省时必须保持关闭。
@@ -232,13 +249,11 @@ type CreditLedgerPageResponse<Item> = {
   };
 };
 const userCreditLedgerPageResponseSchema: z.ZodType<
-  CreditLedgerPageResponse<UserCreditLedgerDto>,
-  z.ZodTypeDef,
+  CreditLedgerPageResponse<UserCreditLedgerDto>, 
   unknown
 > = createExactCursorPageSchema(userCreditLedgerSchema);
 const adminCreditLedgerPageResponseSchema: z.ZodType<
-  CreditLedgerPageResponse<AdminCreditLedgerDto>,
-  z.ZodTypeDef,
+  CreditLedgerPageResponse<AdminCreditLedgerDto>, 
   unknown
 > = createExactCursorPageSchema(adminCreditLedgerSchema);
 const userPageQueryShape = {
@@ -445,13 +460,11 @@ type ProviderBillingFilterQueryInput = z.input<typeof providerBillingOverviewQue
 type ProviderBillingPageQuery = z.output<typeof providerBillingPagedQueryBase>;
 type ProviderBillingPageQueryInput = z.input<typeof providerBillingPagedQueryBase>;
 const providerBillingOverviewQuery: z.ZodType<
-  ProviderBillingFilterQuery,
-  z.ZodTypeDef,
+  ProviderBillingFilterQuery, 
   ProviderBillingFilterQueryInput
 > = providerBillingOverviewQueryBase.superRefine(validateApiCostRange);
 const providerBillingPagedQuery: z.ZodType<
-  ProviderBillingPageQuery,
-  z.ZodTypeDef,
+  ProviderBillingPageQuery, 
   ProviderBillingPageQueryInput
 > = providerBillingPagedQueryBase.superRefine(validateApiCostRange);
 
@@ -547,11 +560,11 @@ const uploadSignatureBaseShape = {
   sessionId: uuidSchema,
   maxSizeBytes: nonnegativeIntegerSchema.positive(),
 };
-const emptyUploadHeadersSchema = z.record(z.string()).refine(
+const emptyUploadHeadersSchema = z.record(z.string(), z.string()).refine(
   headers => Object.keys(headers).length === 0,
   'POST 表单上传不能携带自定义请求头',
 );
-const postUploadFieldsSchema = z.record(z.string()).refine(
+const postUploadFieldsSchema = z.record(z.string(), z.string()).refine(
   fields => Object.keys(fields).length > 0,
   'POST 表单上传必须携带签名字段',
 );
@@ -560,7 +573,7 @@ const uploadSignatureResponseSchema = z.discriminatedUnion('driver', [
     ...uploadSignatureBaseShape,
     driver: z.literal('local'),
     method: z.literal('PUT'),
-    headers: z.record(z.string()),
+    headers: z.record(z.string(), z.string()),
   }),
   z.object({
     ...uploadSignatureBaseShape,
@@ -600,7 +613,7 @@ const realPortraitUploadSignatureSchema = z.discriminatedUnion('driver', [
     maxSizeBytes: nonnegativeIntegerSchema.positive(),
     driver: z.literal('local'),
     method: z.literal('PUT'),
-    headers: z.record(z.string()),
+    headers: z.record(z.string(), z.string()),
   }).strict(),
   z.object({
     uploadUrl: httpUrlSchema,
@@ -1064,18 +1077,7 @@ const publicEndpointContracts = {
     method: 'POST', path: '/api/ai/video-tasks/batch', successStatus: 200,
     body: z.object({
       idempotencyKey: idempotencyKeySchema,
-      requests: z.array(z.object({
-        model: nonemptyStringSchema,
-        prompt: nonemptyStringSchema.max(4_000),
-        config: videoGenerationRequestConfigSchema,
-        references: z.array(generationReferenceInputSchema).max(50).default([]),
-        realPortrait: z.object({
-          actorId: uuidSchema,
-          portraitAssetId: uuidSchema.optional(),
-        }).strict().optional(),
-        promptWizardSource: promptWizardSourceSchema.optional(),
-        tkPromptSource: tkPromptSourceSchema.optional(),
-      }).strict().superRefine((item, context) => {
+      requests: z.array(videoGenerationBatchRequestItemBaseSchema.superRefine((item, context) => {
         if (item.promptWizardSource !== undefined && item.tkPromptSource !== undefined) {
           context.addIssue({
             code: z.ZodIssueCode.custom,
